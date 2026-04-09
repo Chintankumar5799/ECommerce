@@ -1,10 +1,8 @@
-# Use a lightweight JDK 17 image
-FROM openjdk:17-jdk-slim
+FROM eclipse-temurin:17-jdk-alpine
 
 WORKDIR /app
 
-# Copy the built JAR file from the target directory
-# (Note: Jenkins 'mvnw' build creates this file)
+
 COPY target/*.jar app.jar
 
 # Expose the backend port
