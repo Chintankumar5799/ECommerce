@@ -18,20 +18,24 @@ pipeline{
         }
 
         stage('Build Backend'){
-            dir('ECommerce'){
-                echo 'Compiling Java Code....'
+            steps{
+                dir('ECommerce'){
+                    echo 'Compiling Java Code....'
 
-                //-Dskiptests saves time
-                bat 'mvn clean package -DskipTests'
+                    //-Dskiptests saves time
+                    bat 'mvn clean package -DskipTests'
+                }
             }
         }
 
         stage('Build Frontend'){
+            steps{
             dir('ecommerce-frontend'){
                 echo "Installing React Dependencies"
                 bat "npm install" 
 
                 bat "npm run build"
+            }
             }
         }
 
