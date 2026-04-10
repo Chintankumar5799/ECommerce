@@ -1,0 +1,14 @@
+# Ignore heavy local dependencies
+**/node_modules/
+**/target/
+**/.git/
+**/.metadata/
+**/dist/
+
+# Ignore logs
+*.log
+logs/
+
+# Ignore OS junk
+.DS_Store
+Thumbs.db
