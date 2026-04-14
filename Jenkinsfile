@@ -1,4 +1,5 @@
 pipeline{
+
     agent any
 
      environment {
@@ -46,5 +47,17 @@ pipeline{
             }
         }
 
+    }
+
+    post {
+    always {
+        echo 'This runs always'
+    }
+    success {
+        echo 'This runs only if build succeeded'
+    }
+    failure {
+        echo 'This runs only if build failed'
+    }
     }
 }
