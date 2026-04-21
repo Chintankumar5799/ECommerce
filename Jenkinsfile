@@ -49,6 +49,21 @@ pipeline{
 
     }
 
+    stage('Deploy to EC2') {
+    steps {
+        sshagent(['ec2-ssh-key']) {
+            sh """
+            ssh -o StrictHostKeyChecking=no ec2-user@<EC2_PUBLIC_IP> '
+              docker pull your-image:latest &&
+              docker stop app || true &&
+              docker rm app || true &&
+              docker run -d --name app -p 80:80 your-image:latest
+            '
+            """
+        }
+    }
+}
+
     post {
     always {
         echo 'This runs always'
