@@ -52,10 +52,11 @@ stage('Deploy') {
 }
     
 
+
    stage('Deploy to EC2') {
     steps {
         sshagent(['ec2-ssh-key']) {
-            sh """
+            bat """
             ssh -o StrictHostKeyChecking=no ec2-user@100.54.145.139 '
               docker pull ecommerce:latest &&
               docker stop app || true &&
