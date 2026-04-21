@@ -40,13 +40,16 @@ pipeline{
             }
         }
 
-        stage('Build & Deploy'){
-            steps{
-                echo 'Launching the entire application with Docker'
-                bat 'docker-compose up --build -d'
-            }
-        }
+      
 
+stage('Deploy') {
+    steps {
+        sh """
+        docker compose down --remove-orphans || true
+        docker compose up -d --build
+        """
+    }
+}
     
 
    stage('Deploy to EC2') {
