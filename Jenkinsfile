@@ -47,22 +47,23 @@ pipeline{
             }
         }
 
-    }
+    
 
-    stage('Deploy to EC2') {
+   stage('Deploy to EC2') {
     steps {
         sshagent(['ec2-ssh-key']) {
             sh """
-            ssh -o StrictHostKeyChecking=no ec2-user@<EC2_PUBLIC_IP> '
-              docker pull your-image:latest &&
+            ssh -o StrictHostKeyChecking=no ec2-user@100.54.145.139 '
+              docker pull ecommerce:latest &&
               docker stop app || true &&
               docker rm app || true &&
-              docker run -d --name app -p 80:80 your-image:latest
+              docker run -d --name app -p 80:80 ecommerce:latest
             '
             """
         }
     }
 }
+    }
 
     post {
     always {
