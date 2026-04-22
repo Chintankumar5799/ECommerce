@@ -100,13 +100,8 @@ public class SecurityConfig {
     public org.springframework.web.cors.CorsConfigurationSource corsConfigurationSource() {
         org.springframework.web.cors.CorsConfiguration configuration = new org.springframework.web.cors.CorsConfiguration();
         // Allow likely frontend origins (localhost:3000 for React, etc.)
-        configuration.setAllowedOrigins(java.util.List.of(
-            "http://localhost:3000", 
-            "http://localhost:4200", 
-            "http://localhost:5173", 
-            "http://localhost:5174", 
-            "http://localhost:8081"
-        ));
+        // Allow likely frontend origins (localhost:3000 for React, etc.) and wildcard for EC2 access
+        configuration.setAllowedOriginPatterns(java.util.List.of("*"));
         configuration.setAllowedMethods(java.util.List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
         configuration.setAllowedHeaders(java.util.List.of("Authorization", "Content-Type"));
         configuration.setAllowCredentials(true);
