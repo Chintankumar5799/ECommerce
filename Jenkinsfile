@@ -38,7 +38,15 @@ pipeline {
         stage('Prepare EC2') {
             steps {
                 bat '''
-                ssh -i C:/Users/PLW_002/Downloads/Backend-Pair.pem -o StrictHostKeyChecking=no ec2-user@100.54.145.139 "mkdir -p /home/ec2-user/app"
+                ssh -i C:\\keys\\ec2.pem -o StrictHostKeyChecking=no ec2-user@100.54.145.139 "mkdir -p /home/ec2-user/app"
+                '''
+            }
+        }
+
+        stage('Copy Backend Env File') {
+            steps {
+                bat '''
+                scp -i C:\\keys\\ec2.pem -o StrictHostKeyChecking=no backend.env ec2-user@100.54.145.139:/home/ec2-user/app/
                 '''
             }
         }
@@ -46,7 +54,19 @@ pipeline {
         stage('Deploy to EC2') {
             steps {
                 bat '''
-                ssh -i C:/Users/PLW_002/Downloads/Backend-Pair.pem -o StrictHostKeyChecking=no ec2-user@100.54.145.139 "cd /home/ec2-user/app && docker compose down --remove-orphans || true && docker compose up -d --build"
+                ssh -i C:\\keys\\ec2.pem -o StrictHostKeyChecking=no ec2-user@100.54.145.139 "
+                docker network create ecommerce-net || true &&
+                docker volume create mydata || true &&
+                docker stop ecommerce || true &&
+                docker rm ecommerce || true &&
+                docker pull chintankumar5799/ecommerce-backend &&
+                docker run -d --name ecommerce \
+                    --network ecommerce-net \
+                    -p 8081:8081 \
+                    -v mydata:/var/lib/ecommerce-backend-img/data \
+                    --env-file /home/ec2-user/app/backend.env \
+                    chintankumar5799/ecommerce-backend
+                "
                 '''
             }
         }
