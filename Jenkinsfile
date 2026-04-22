@@ -43,18 +43,12 @@ pipeline {
             }
         }
 
-        stage('Copy Backend Env File') {
-            steps {
-                bat '''
-                scp -i C:/Users/PLW_002/Downloads/Backend-Pair.pem -o StrictHostKeyChecking=no backend.env ec2-user@100.54.145.139:/home/ec2-user/app/
-                '''
-            }
-        }
-
-        stage('Deploy to EC2') {
+      stage('Deploy to EC2') {
     steps {
         bat """
-        ssh -i C:\\keys\\ec2.pem -o StrictHostKeyChecking=no ec2-user@100.54.145.139 "
+        ssh -i C:\\Users\\PLW_002\\Downloads\\Backend-Pair.pem -o StrictHostKeyChecking=no ec2-user@100.54.145.139 "
+        docker network create ecommerce-net || true &&
+        docker volume create mydata || true &&
         docker stop ecommerce || true &&
         docker rm ecommerce || true &&
         docker pull chintankumar5799/ecommerce-backend &&
@@ -73,7 +67,6 @@ pipeline {
         """
     }
 }
-
         
     }
 
