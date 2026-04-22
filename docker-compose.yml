@@ -22,5 +22,5 @@ services:
       dockerfile: Dockerfile
     container_name: ecommerce-frontend
     ports:
-      - "8080:80"
+      - "9091:80"
     restart: always
