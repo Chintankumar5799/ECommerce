@@ -43,23 +43,11 @@ pipeline {
             }
         }
 
-      stage('Deploy to EC2') {
+     stage('Deploy to EC2') {
     steps {
-        bat """
-        ssh -i C:\\Users\\PLW_002\\Downloads\\Backend-Pair.pem -o StrictHostKeyChecking=no ec2-user@100.54.145.139 " docker network create ecommerce-net || true && docker volume create mydata || true && docker stop ecommerce || true && docker rm ecommerce || true && docker pull chintankumar5799/ecommerce-backend && \
-       docker run -d --name ecommerce \
-            -p 8081:8081 \
-            -e JWT_SECRET=${JWT_SECRET} \
-            -e GOOGLE_CLIENT_ID=${GOOGLE_CLIENT_ID} \
-            -e GOOGLE_CLIENT_SECRET=${GOOGLE_CLIENT_SECRET} \
-            -e STRIPE_API_KEY=${STRIPE_API_KEY} \
-            -e SPRING_DATASOURCE_URL=jdbc:postgresql://ecommerce.cmzkwumcaf8z.us-east-1.rds.amazonaws.com:5432/postgres \
-            -e SPRING_DATASOURCE_USERNAME=postgres \
-            -e SPRING_DATASOURCE_PASSWORD=${DB_PASSWORD} \
-            -e SPRING_JPA_HIBERNATE_DDL_AUTO=update \
-            chintankumar5799/ecommerce-backend
-        "
-        """
+        bat '''
+       ssh -i C:\\Users\\PLW_002\\Downloads\\Backend-Pair.pem -o StrictHostKeyChecking=no ec2-user@100.54.145.139 "docker network create ecommerce-net; docker volume create mydata; docker stop ecommerce || true; docker rm ecommerce || true; docker pull chintankumar5799/ecommerce-backend; docker run -d --name ecommerce -p 8081:8081 -e JWT_SECRET=%JWT_SECRET% -e GOOGLE_CLIENT_ID=%GOOGLE_CLIENT_ID% -e GOOGLE_CLIENT_SECRET=%GOOGLE_CLIENT_SECRET% -e STRIPE_API_KEY=%STRIPE_API_KEY% -e SPRING_DATASOURCE_URL=jdbc:postgresql://ecommerce.cmzkwumcaf8z.us-east-1.rds.amazonaws.com:5432/postgres -e SPRING_DATASOURCE_USERNAME=postgres -e SPRING_DATASOURCE_PASSWORD=%DB_PASSWORD% -e SPRING_JPA_HIBERNATE_DDL_AUTO=update chintankumar5799/ecommerce-backend"
+       '''
     }
 }
         
