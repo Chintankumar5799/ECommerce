@@ -3,7 +3,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Set;
 
-import org.jspecify.annotations.Nullable;
+//import org.jspecify.annotations.Nullable;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -11,7 +11,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 //This is not Entity nor DTO class its for spring security
 //to check role before give details for dashboard
 
-public class CustomUserDetails implements UserDetails {
+public abstract class CustomUserDetails implements UserDetails {
 	private Long id;
     private String email;
     private Set<Role> role;
@@ -54,7 +54,7 @@ public class CustomUserDetails implements UserDetails {
 	}
 
 	@Override
-	public @Nullable String getPassword() {
+	public @jakarta.annotation.Nullable String getPassword() {
 		// TODO Auto-generated method stub
 		return null;
 	}

@@ -1,0 +1,42 @@
+[
+  {
+    "command": "docker-compose up",
+    "explanation": "Starts all services defined in the docker-compose.yml file. Use the --build flag to recreate images if you changed your code."
+  },
+  {
+    "command": "docker-compose down",
+    "explanation": "Stops and removes all containers, networks, and images defined in the compose file. Adding -v will also remove named volumes."
+  },
+  {
+    "command": "docker ps",
+    "explanation": "Lists all currently running containers. Adding -a shows all containers, including those that have stopped."
+  },
+  {
+    "command": "docker run -v [volume_name]:[container_path]",
+    "explanation": "Runs a container with a persistent volume. This ensures data (like MariaDB databases) is saved on your host machine even if the container is stopped or removed."
+  },
+  {
+    "command": "docker exec -it [container_name] bash",
+    "explanation": "Opens an interactive terminal inside a running container so you can inspect files or run commands manually."
+  },
+  {
+    "command": "docker logs [container_name]",
+    "explanation": "Displays the console output (logs) of a specific container. Use -f to follow the logs in real-time."
+  },
+  {
+    "command": "docker image prune",
+    "explanation": "Removes unused images to free up disk space on your computer."
+  },
+  {
+    "command": "docker stop [container_id]",
+    "explanation": "Gracefully stops a running container without removing it."
+  },
+  {
+    "command": "docker rm [container_id]",
+    "explanation": "Removes a stopped container from your system storage."
+  },
+  {
+    "command": "docker system prune",
+    "explanation": "A powerful command that removes all stopped containers, unused networks, and dangling images at once."
+  }
+]

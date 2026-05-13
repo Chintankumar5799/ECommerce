@@ -8,18 +8,18 @@ import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 
 @SpringBootApplication
-@EnableJpaAuditing //Without this auditing field stay null
+@EnableJpaAuditing // Without this auditing field stay null
 @EnableMethodSecurity
+// @MapperScan("com.example.demo.category.dao")
 public class ECommerceApplication {
-	
-    private static final Logger logger = LoggerFactory.getLogger(ECommerceApplication.class);
 
+	private static final Logger logger = LoggerFactory.getLogger(ECommerceApplication.class);
 
 	public static void main(String[] args) {
-		
-     SpringApplication.run(ECommerceApplication.class, args);
-     logger.info("start of logger");
-	
+
+		SpringApplication.run(ECommerceApplication.class, args);
+		logger.info("start of logger");
+
 	}
 
 }
