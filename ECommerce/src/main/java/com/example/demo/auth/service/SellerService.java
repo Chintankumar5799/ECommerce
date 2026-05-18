@@ -6,8 +6,11 @@ import com.example.demo.category.repository.ProductRepository;
 
 import java.util.List;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
+import com.example.demo.auth.config.OAuthSuccessHandler;
 import com.example.demo.auth.dao.DashboardResponse;
 import com.example.demo.auth.entity.CustomUserDetails;
 import com.example.demo.auth.entity.User;
@@ -20,6 +23,8 @@ public class SellerService {
 	private final SellerRepository sellerRepository;
 
 
+	private static final Logger log = LoggerFactory.getLogger(SellerService.class);
+	
 	public SellerService(SellerRepository sellerRepository,ProductRepository productRepository) {
 		this.sellerRepository=sellerRepository;
 		this.productRepository=productRepository;
@@ -29,12 +34,12 @@ public class SellerService {
 	public DashboardResponse getDashboard(Long sellerId) {
 		List<Product> sellersProducts=productRepository.findBySellerId(sellerId);
 //				.orElseThrow(()->new RuntimeException("Seller not found"));
-		
+		log.info("Dashboard for seller "+sellerId);
 		for(Product p:sellersProducts) {
 			List<ProductVariants> productVariants=p.getProductVariants();
 			for(ProductVariants productVariant:productVariants) {
 				productVariant.getQuantity();
-//				productVariant.
+
 			}
 		}
 		

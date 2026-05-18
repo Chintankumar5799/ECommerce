@@ -18,7 +18,7 @@
 - [ ] **Order Management**: Order placement and status tracking.
 - [x] **Payment Integration**: Secure payment gateway integration.
 - [ ] **Refund System**: Handling returns and refunds.
-- [ ] **Order History**: User's past purchases and transaction details.
+- [x] **Order History**: User's past purchases and transaction details.
 
 <!-- ## 🚚 Logistics
 - [ ] **Shipment Tracking**: Managing shipping status and delivery updates. -->

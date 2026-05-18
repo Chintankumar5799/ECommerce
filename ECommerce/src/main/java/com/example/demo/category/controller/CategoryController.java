@@ -2,6 +2,8 @@ package com.example.demo.category.controller;
 
 import java.util.List;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -12,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.example.demo.cart.controller.CartController;
 import com.example.demo.category.dao.CategoryResponse;
 import com.example.demo.category.entity.Category;
 import com.example.demo.category.service.CategoryService;
@@ -23,6 +26,7 @@ import jakarta.validation.Valid;
 public class CategoryController {
 	
 	private final CategoryService categoryService;
+	private static final Logger log = LoggerFactory.getLogger(CategoryController.class);
 	
 	public CategoryController(CategoryService categoryService) {
 		this.categoryService=categoryService;
@@ -30,13 +34,14 @@ public class CategoryController {
 	
 	@GetMapping("/getHi")
 	public String getHi() {
-		return "Hello askjnas";
+		return "Hello";
 	}
 	
 	//May be for admin only
 	@PreAuthorize("hasRole('SELLER')")
 	@PostMapping("/newCategory")
 	public ResponseEntity<CategoryResponse> addCategory( @RequestParam String categoryName){
+		log.info("New Category with name "+categoryName+" is added.");
 		CategoryResponse categoryResponse=categoryService.addCategory(categoryName);
 		return ResponseEntity.status(HttpStatus.CREATED).body(categoryResponse);
 	}
@@ -44,6 +49,7 @@ public class CategoryController {
 	//For admin and seller
 	@GetMapping("/getCategory")
 	public ResponseEntity<List<CategoryResponse>> getAllCategory(){
+		log.info("Get all Category");
 		return ResponseEntity.status(HttpStatus.ACCEPTED).body(categoryService.getAllCategory()); 
 	}
 	

@@ -3,13 +3,17 @@ package com.example.demo.order.service;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
+import com.example.demo.auth.exception.ResourceNotFoundException;
 import com.example.demo.cart.entity.Cart;
 import com.example.demo.cart.repository.CartRepository;
 import com.example.demo.category.entity.Product;
 import com.example.demo.category.entity.ProductVariants;
 import com.example.demo.category.repository.ProductRepository;
+import com.example.demo.order.controller.OrderController;
 import com.example.demo.order.dao.OrderItemResponse;
 import com.example.demo.order.dao.OrderResponse;
 import com.example.demo.order.entity.Order;
@@ -32,6 +36,7 @@ public class OrderService {
 	private final OrderRepository orderRepository;
 	private final OrderItemRepository orderItemRepository;
 	
+	private final static Logger log=LoggerFactory.getLogger(OrderController.class);
 	
 	public OrderService(CartRepository cartRepository, ProductRepository productRepository, OrderRepository orderRepository, OrderItemRepository orderItemRepository) {
 		this.cartRepository=cartRepository;
@@ -44,6 +49,7 @@ public class OrderService {
 	public void createOrderFromCart(Long userId, String id) {
 		List<Cart> allItems = cartRepository.findByUserId(userId);
 		
+		log.info("create order from cart with payment intent id "+id);
 		// ONLY get items that are actually in the Cart (ignore Wishlist!)
 		List<Cart> cartItems = new ArrayList<>();
 		for(Cart c : allItems) {
@@ -59,7 +65,7 @@ public class OrderService {
 		Order order=new Order();
 		order.setUserId(userId);
 		
-		System.out.println(order.getUserId());
+		
 		order.setTransactionId(id);
 		order.setOrderStatus("PLACED");   // PLACED, SHIPPED, DELIVERED
 		order.setPaymentMethod("CARD");	  // CARD, UPI, COD
@@ -72,6 +78,7 @@ public class OrderService {
 		order.setShippingCharge(0L);
 		
 		order = orderRepository.save(order);
+		log.info("Order details is saved in Database.");
 		Long grandTotalPrice=0L;
 		
 		for(Cart c:cartItems) {
@@ -103,7 +110,7 @@ public class OrderService {
 		}
 		
 		order.setTotalAmount(grandTotalPrice);
-		System.out.println("total price "+order.getTotalAmount()+ " "+"Shipping charge"+ order.getTaxAmount());
+		log.info("total price "+order.getTotalAmount()+ " "+"Shipping charge"+ order.getTaxAmount());
 		order.setDiscountAmount(grandTotalPrice); //actually it is diff of all product to actual to orderprice
 		order.setShippingCharge((long)(grandTotalPrice*0.01));
 		order.setTaxAmount((long)(grandTotalPrice*0.03));
@@ -174,6 +181,19 @@ public class OrderService {
 			orderItemResponseList.add(orderResponse);
 		}
 		return orderItemResponseList;
+	}
+
+	public OrderResponse orderStatus(Long orderId, String orderStatus) {		
+		 Order order = orderRepository.findById(orderId)
+		            .orElseThrow(() -> new ResourceNotFoundException("No order found"));
+		 
+		 order.setOrderStatus(orderStatus);
+		 orderRepository.save(order);
+		 
+		 OrderResponse orderResponse=new OrderResponse();
+		 orderResponse.setOrderStatus(order.getOrderStatus());
+		 
+		 return orderResponse;
 	}
 
 }

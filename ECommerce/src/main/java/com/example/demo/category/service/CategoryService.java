@@ -3,6 +3,8 @@ package com.example.demo.category.service;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
@@ -23,6 +25,8 @@ public class CategoryService {
 	private CategoryRepository categoryRepository;
 	private SubCategoryRepository subCategoryRepository;
 	
+	private static final Logger log=LoggerFactory.getLogger(CategoryService.class);
+	
 	@Autowired
 	private CategoryMapper categoryMapper;
 	
@@ -34,11 +38,12 @@ public class CategoryService {
 	public CategoryResponse addCategory(String categoryName) {
 		Category category=new Category();
 		category.setCategoryName(categoryName);
-		
+		log.info("Saving new category to DB");
 		Category savedCategory=categoryRepository.save(category);
 		CategoryResponse categoryResponse=new CategoryResponse();
 		categoryResponse.setCategoryName(savedCategory.getCategoryName());
 		categoryResponse.setId(savedCategory.getId());
+		log.info("Returning new category Response");
 		
 		return categoryResponse;	
 	}
@@ -62,7 +67,7 @@ public class CategoryService {
 //		}
 //		
 //		return categoryResponseList;
-		
+		log.info("Get All Category list");
 		return categoryMapper.toCategoryResponseList(categoryList);
 	}
 	
@@ -84,7 +89,7 @@ public class CategoryService {
 	@Deprecated
 	public List<SubCategoryResponse> getAllSubcategory(Long id){
 		List<SubCategory> subCategoryList=subCategoryRepository.findByCategoryId(id);
-		
+		log.info("Get all sub-category.");
 		List<SubCategoryResponse> subCategoryResponseList=new ArrayList<>();
 		
 		for(SubCategory subCategory:subCategoryList) {

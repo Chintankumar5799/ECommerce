@@ -4,6 +4,8 @@ import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
@@ -23,6 +25,7 @@ import org.springframework.web.multipart.MultipartFile;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+
 import jakarta.validation.Valid;
 
 import com.example.demo.category.dao.ProductRequest;
@@ -40,6 +43,8 @@ public class ProductController {
 	private final ProductService productService;
 	private final ObjectMapper objectMapper;
 
+	private final static Logger log=LoggerFactory.getLogger(ProductController.class);
+	
 	public ProductController(ProductService productService) {
 		this.productService=productService;
 		this.objectMapper = new ObjectMapper();
@@ -53,13 +58,13 @@ public class ProductController {
 			@RequestPart("jsonAttributes") String jsonAttributes, 
 	      @RequestPart(value = "images", required = false) MultipartFile[] images) throws IOException{
 		
-		System.out.println("DEBUG raw JSON requestStr: " + requestStr);
+		log.info("Raw JSON requestStr: " + requestStr);
 		
 		ProductRequest request = null;
 		try {
 			request = objectMapper.readValue(requestStr, ProductRequest.class);
 		} catch (Exception e) {
-			System.out.println("ERROR: JSON Parsing failed for productRequest");
+			log.error("JSON Parsing failed for productRequest");
 			e.printStackTrace();
 			throw new org.springframework.web.server.ResponseStatusException(HttpStatus.BAD_REQUEST, "Invalid JSON format for productRequest");
 		}
@@ -67,30 +72,27 @@ public class ProductController {
 		JsonNode jsonNode = null;
 		try {
 		    jsonNode = objectMapper.readTree(jsonAttributes);  // Convert JSON string to JsonNode
-		    System.out.println("DEBUG parsed jsonAttributes as JsonNode: " + jsonNode.toString());
+		    log.info("parsed jsonAttributes as JsonNode: " + jsonNode.toString());
 		} catch (Exception e) {
-		    System.out.println("ERROR: Failed to parse jsonAttributes JSON");
+		    log.error("ERROR: Failed to parse jsonAttributes JSON");
 		    e.printStackTrace();
 		}
-		    
-		System.out.println("DEBUG: Parsed Product Name: " + request.getProductName());
-		System.out.println("DEBUG: Parsed SubCategory ID: " + request.getSubCategoryId());
-
 		ProductResponse productResponse=productService.addProduct(request,jsonNode,images);
 		return ResponseEntity.status(HttpStatus.CREATED).body(productResponse);
 	}
 
 	//BUYER 
-	@GetMapping("/getProduct")
-	public ResponseEntity<List<ProductResponse>> getProduct(@RequestParam Long subcategoryId){
-		System.out.println("DEBUG: Parsed SubCategory ID: " + subcategoryId);
-		List<ProductResponse> productResponse=productService.getProductsBySubCategoryId(subcategoryId);
-		return ResponseEntity.status(HttpStatus.OK).body(productResponse);
-	}
-	
+//	@GetMapping("/getAllProduct")
+//	public ResponseEntity<List<ProductResponse>> getProduct(@RequestParam Long subcategoryId){
+//		log.info("Get product with subcategory " + subcategoryId);
+//		List<ProductResponse> productResponse=productService.getProductsBySubCategoryId(subcategoryId);
+//		return ResponseEntity.status(HttpStatus.OK).body(productResponse);
+//	}
+//	
 	//BUYER
 	@GetMapping("/getProductBySubCategory")
 	public ResponseEntity<List<ProductResponse>> getProductBySubCategory(@RequestParam Long subCategoryId){
+		log.info("Get product by Sub Category");
 		return ResponseEntity.status(HttpStatus.ACCEPTED).body(productService.getProductBySubCategory(subCategoryId));
 		
 	}
@@ -98,7 +100,7 @@ public class ProductController {
 	//BUYER
 	@GetMapping("/getProductVariant")
 	public ResponseEntity<List<ProductResponse>> getSubcategory(@RequestParam Long productId){
-		System.out.println("DEBUG: Parsed Product ID: " + productId);
+		log.info("Get Product variant by product Id");
 		List<ProductResponse> productResponse=productService.getProductsVariantByProductId(productId);
 	    return ResponseEntity.status(HttpStatus.OK).body(productResponse);
 	}
@@ -107,9 +109,7 @@ public class ProductController {
 	//BUYER
 	@PostMapping("/buyProduct")
 	public ResponseEntity<PurchaseResponse> buyProduct(@RequestParam Long variantId,@RequestParam Long quantity){
-		
-		System.out.println(variantId+" "+quantity);
-		
+		log.info("Buy product with variant Id"+variantId+"With quantity "+quantity);
 		PurchaseResponse purchaseResponse=productService.buyProduct(variantId,quantity);
 		return ResponseEntity.status(HttpStatus.ACCEPTED).body(purchaseResponse);
 	}
@@ -128,7 +128,7 @@ public class ProductController {
 //		List<Product> filteredProducts=filterService.applyFilters(allProducts);
 		
 		Page<ProductResponse> filteredProducts=productService.filterProducts(categoryId, subCategoryId, minPrice, maxPrice, page, size, sortBy, direction);
-		System.out.println(filteredProducts);
+		log.info("List of fileters "+filteredProducts);
 		return ResponseEntity.ok(filteredProducts);
 		
 	}
@@ -136,7 +136,9 @@ public class ProductController {
 	
 	@DeleteMapping
 	public ResponseEntity<String> removeProduct(@RequestParam Long productId){
+		
 		String remove=productService.removeProducts(productId);
+		log.info("Removing listed Product");
 		return ResponseEntity.status(HttpStatus.OK).body(remove);
 	}
 	

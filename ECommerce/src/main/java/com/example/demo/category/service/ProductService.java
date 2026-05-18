@@ -5,6 +5,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -15,6 +17,7 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.server.ResponseStatusException;
 import org.springframework.http.HttpStatus;
 
+import com.example.demo.category.controller.ProductController;
 import com.example.demo.category.dao.ProductRequest;
 import com.example.demo.category.dao.ProductResponse;
 import com.example.demo.category.dao.ProductVariantRequest;
@@ -39,6 +42,8 @@ public class ProductService {
 	private final SubCategoryRepository subCategoryRepository;
 	private final ProductVariantsRepository productVariantsRepository;
 	
+	private final static Logger log=LoggerFactory.getLogger(ProductService.class);
+	
 	public ProductService(ProductRepository productRepository, SubCategoryRepository subCategoryRepository,ProductVariantsRepository productVariantsRepository) {
 		this.productRepository=productRepository;
 		this.subCategoryRepository=subCategoryRepository;
@@ -49,13 +54,17 @@ public class ProductService {
 	@Transactional
 	public ProductResponse addProduct(ProductRequest productRequest, JsonNode jsonAttributes, MultipartFile[] images) throws IOException {
 	    if (productRequest.getSubCategoryId() == null) {
+	    	log.error("Sub-category "+productRequest.getSubCategoryId()+" is not found.");
 	        throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Sub Category ID is required");
 	    }
+	    
+	    
 	    
 	    // Retrieve subcategory by ID
 	    SubCategory subCategory = subCategoryRepository.findById(productRequest.getSubCategoryId())
 	            .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Sub Category not found"));
-	    System.out.println(subCategory);
+	   
+	  
 	    List<Images> imageList = new ArrayList<>();
 	    Product product = new Product();
 
@@ -64,7 +73,7 @@ public class ProductService {
 	    product.setOfferPrice(productRequest.getOfferPrice());
 	    product.setPrice(productRequest.getPrice());
 	    product.setSubCategory(subCategory);
-
+	    
 	    // Process images if any
 	    if (images != null && images.length > 0) {
 	        for (MultipartFile file : images) {
@@ -97,9 +106,11 @@ public class ProductService {
 	    		productVariants.setQuantity(proVariant.getQuantity()!=null? proVariant.getQuantity():0L);
 	    		productVariants.setVariant_attributes(proVariant.getVariantAttributes());
 	    		
+	    		log.info("Product variant "+productVariants.getVariantAttributes()+ "is saved under product "+productVariants.getProduct());
 	    		productVariantsRepository.save(productVariants);
 	    	}
 	    }
+	    
 	    
 	    ProductResponse productResponse=new ProductResponse();
 	    productResponse.setDiscount(productSaved.getDiscount());
@@ -121,10 +132,10 @@ public class ProductService {
 			
 			
 			int updatedStock=productVariantsRepository.decreaseStock(variantId, quantity);
-			System.out.println("DEBUG: Starting buyProduct for variantId: " + variantId + ", quantity: " + quantity);
+			log.info("Starting buyProduct for variantId: " + variantId + ", quantity: " + quantity);
 			
 			if (updatedStock == 0) {
-				System.out.println("ERROR: Variant exists but product is NULL for variantId: " + variantId);
+				log.error("Variant exists but product is NULL for variantId: " + variantId);
 				throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Insufficient stock or variant not found");
 			}
 			
@@ -134,7 +145,7 @@ public class ProductService {
 			
 			
 			Product product = productVariants.getProduct();
-			System.out.println("DEBUG: Found Product: " + product.getProductName());
+			log.info("Product is found : " + product.getProductName());
 	
 			
 			PurchaseResponse purchaseResponse = new PurchaseResponse();
@@ -153,17 +164,17 @@ public class ProductService {
 					);
 				}
 			} catch (Exception ex) {
-				System.out.println("WARN: Could not convert variantAttributes JsonNode: " + ex.getMessage());
+				log.error("Could not convert variantAttributes JsonNode: " + ex.getMessage());
 			}
 			purchaseResponse.setVarientAttributes(plainAttributes);
 			
-			System.out.println("DEBUG: PurchaseResponse prepared successfully for: " + purchaseResponse.getProductName());
+			log.info("PurchaseResponse prepared successfully for: " + purchaseResponse.getProductName());
 			
-			System.out.println("DEBUG: PurchaseResponse prepared successfully for: " + purchaseResponse.getVariantAttributes());
+			log.info("PurchaseResponse prepared successfully for: " + purchaseResponse.getVariantAttributes());
 			
 			return purchaseResponse;
 		} catch (Exception e) {
-			System.out.println("CRITICAL ERROR in buyProduct:");
+			log.info("Error to buyProduct");
 			e.printStackTrace();
 			throw e;
 		}
@@ -185,10 +196,13 @@ public class ProductService {
 			productResponseList.add(productResponse);
 		}
 		
-		System.out.println(productList.toString());
+		log.info("Get product by sub category "+productList.toString());
+		
 		return productResponseList;
-		}catch(Exception e) {
-			System.out.println("CRITICAL ERROR in buyProduct:");
+		
+		}
+		catch(Exception e) {
+		    log.error("Error to get Product by Sub category"+e);
 			e.printStackTrace();
 			throw e;
 		}
@@ -197,6 +211,7 @@ public class ProductService {
 
 	public List<Product> getAllProducts() {
 		List<Product> productList=productRepository.findAll();
+		log.info("Getting list of all products");
 		return productList;
 	}
 	
@@ -252,23 +267,23 @@ public class ProductService {
    }
 
 
-	public List<ProductResponse> getProductsBySubCategoryId(long subcategoryId) {
-		List<Product> productList=productRepository.findBySubCategoryId(subcategoryId);
-		
-		List<ProductResponse> productResponseList=new ArrayList<>();
-		
-		for(Product product:productList) {
-			ProductResponse response=new ProductResponse();
-			response.setProductName(product.getProductName());
-			response.setId(product.getId());
-			response.setPrice(product.getPrice());
-			response.setOfferPrice(product.getOfferPrice());
-			response.setDiscount(product.getDiscount());
-			productResponseList.add(response);
-			
-		}
-		return productResponseList;
-	}
+//	public List<ProductResponse> getProductsBySubCategoryId(long subcategoryId) {
+//		List<Product> productList=productRepository.findBySubCategoryId(subcategoryId);
+//		
+//		List<ProductResponse> productResponseList=new ArrayList<>();
+//		
+//		for(Product product:productList) {
+//			ProductResponse response=new ProductResponse();
+//			response.setProductName(product.getProductName());
+//			response.setId(product.getId());
+//			response.setPrice(product.getPrice());
+//			response.setOfferPrice(product.getOfferPrice());
+//			response.setDiscount(product.getDiscount());
+//			productResponseList.add(response);
+//			
+//		}
+//		return productResponseList;
+//	}
 
 
 	public List<ProductResponse> getProductsVariantByProductId(Long productId) {
@@ -281,7 +296,7 @@ public class ProductService {
 			productResponse.setOfferPrice(productVariants.getOfferPrice());
 			productResponse.setDiscount(productVariants.getDiscount());
 			productResponse.setPrice(productVariants.getPrice());
-			System.out.println("Price"+productVariants.getPrice()+" Offer Price"+productVariants.getOfferPrice());
+			log.info("Price"+productVariants.getPrice()+" Offer Price"+productVariants.getOfferPrice());
 			productResponse.setVariantId(productVariants.getVariantId());
 			
 			// Convert JsonNode -> plain Java Object so Jackson serializes the actual JSON
@@ -294,10 +309,10 @@ public class ProductService {
 					);
 				}
 			} catch (Exception ex) {
-				System.out.println("WARN: Could not convert variantAttributes JsonNode: " + ex.getMessage());
+				log.error("Could not convert variantAttributes JsonNode: " + ex.getMessage());
 			}
 			
-			System.out.println("Plain attributes..."+plainAttributes);
+			log.info("Plain attributes..."+plainAttributes);
 			productResponse.setVariantAttributes(plainAttributes);
 			
 			productResponseList.add(productResponse);
@@ -309,6 +324,7 @@ public class ProductService {
 
 	public String removeProducts(Long productId) {
 		productRepository.deleteById(productId);
+		log.info("Removing product with product id"+productId);
 		return "Product is removed";
 	}
 

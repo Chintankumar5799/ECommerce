@@ -1,5 +1,7 @@
 package com.example.demo.category.controller;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -27,6 +29,8 @@ public class SubCategoryController {
 
 	private final SubCategoryService subCategoryService;
 	
+	private final static Logger log=LoggerFactory.getLogger(SubCategoryController.class);
+	
 	public SubCategoryController(SubCategoryService subCategoryService) {
 		this.subCategoryService=subCategoryService;
 	}
@@ -39,6 +43,7 @@ public class SubCategoryController {
 	@PostMapping("/newSubCategory")
 	public ResponseEntity<SubCategoryResponse> addSubCategory(@Valid @RequestBody SubCategoryRequest subCategoryRequest){
 		SubCategoryResponse subCategory=subCategoryService.addSubCategory(subCategoryRequest);
+		log.info("Add subcategory with name"+subCategory.toString());
 		return ResponseEntity.status(HttpStatus.CREATED).body(subCategory);
 	}
 	

@@ -31,8 +31,15 @@ public class Ticket {
 	@Enumerated(EnumType.STRING)
 	private Priority priority;
 	
+	
+	@Column 
+	private String category;
+	
+	@Column
+	private String description;
+	
 	@Column(unique=true)
-	private String username;
+	private String email;
 	
 	private LocalDateTime createdOn;
 	
@@ -79,12 +86,30 @@ public class Ticket {
 		this.priority = priority;
 	}
 
-	public String getUsername() {
-		return username;
+
+
+	public String getCategory() {
+		return category;
 	}
 
-	public void setUsername(String username) {
-		this.username = username;
+	public void setCategory(String category) {
+		this.category = category;
+	}
+
+	public String getDescription() {
+		return description;
+	}
+
+	public void setDescription(String description) {
+		this.description = description;
+	}
+
+	public String getEmail() {
+		return email;
+	}
+
+	public void setEmail(String email) {
+		this.email = email;
 	}
 
 	public LocalDateTime getCreatedOn() {
@@ -111,13 +136,13 @@ public class Ticket {
 		this.status = status;
 	}
 
-	public Ticket(Long id, String summary, Priority priority, String username, LocalDateTime createdOn,
+	public Ticket(Long id, String summary, Priority priority, String email, LocalDateTime createdOn,
 			LocalDateTime updatedOn, Status status) {
 		super();
 		this.id = id;
 		this.summary = summary;
 		this.priority = priority;
-		this.username = username;
+		this.email = email;
 		this.createdOn = createdOn;
 		this.updatedOn = updatedOn;
 		this.status = status;

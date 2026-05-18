@@ -1,5 +1,7 @@
 package com.example.demo.category.service;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import com.example.demo.auth.exception.ResourceNotFoundException;
@@ -21,11 +23,12 @@ public class SubCategoryService {
 		this.categoryRepository=categoryRepository;
 	}
 	
+	private final static Logger log=LoggerFactory.getLogger(SubCategoryService.class);
 	
 	public SubCategoryResponse addSubCategory(SubCategoryRequest subCategoryRequest) {
 		
 		
-		System.out.println(subCategoryRequest.getCategoryId()+" "+subCategoryRequest.getSpecificationName());
+		log.info("Sub category with category id and specific name is "+subCategoryRequest.getCategoryId()+" "+subCategoryRequest.getSpecificationName());
 		
 		Category category=categoryRepository.findById(subCategoryRequest.getCategoryId())
 				.orElseThrow(() -> new ResourceNotFoundException("Category not found"));
@@ -37,6 +40,7 @@ public class SubCategoryService {
 //		subcategory.setId(subCategoryRequest.getId());
 		
 		SubCategory subCategorySaved=subCategoryRepository.save(subcategory);
+		log.info("Sub category is saved");
 		
 		SubCategoryResponse subCategoryResponse=new SubCategoryResponse();
 		subCategoryResponse.setCategoryName(category.getCategoryName());
