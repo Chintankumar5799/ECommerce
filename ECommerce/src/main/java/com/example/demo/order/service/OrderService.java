@@ -138,9 +138,11 @@ public class OrderService {
 //		orderRepository.save(order);
 //	}
 
-	public List<OrderResponse> orderHistory(Long userId) {
-		List<Order> orderList=orderRepository.findByUserId(userId);
+	public List<OrderResponse> orderHistory(Long userId, org.springframework.data.domain.Pageable pageable) {
+		List<Order> orderList=orderRepository.findByUserId(userId, pageable).getContent();
 		List<OrderResponse> orderResponseList=new ArrayList<>();
+		
+		log.info("Order id is found for "+orderList);
 		
 		for(Order order:orderList) {
 			OrderResponse orderResponse=new OrderResponse();
@@ -167,6 +169,7 @@ public class OrderService {
 	public List<OrderItemResponse> orderHistoryByOrderId(Long userId, Long orderId) {
 		List<OrderItem> orderItems=orderItemRepository.findByOrderId(orderId);
 		List<OrderItemResponse> orderItemResponseList=new ArrayList<>();
+		log.info("Got details for orderId "+orderId);
 		
 		for(OrderItem orderItem:orderItems) {
 			OrderItemResponse orderResponse=new OrderItemResponse();
@@ -189,6 +192,7 @@ public class OrderService {
 		 
 		 order.setOrderStatus(orderStatus);
 		 orderRepository.save(order);
+		 log.info("Order status is saved in"+orderStatus);
 		 
 		 OrderResponse orderResponse=new OrderResponse();
 		 orderResponse.setOrderStatus(order.getOrderStatus());

@@ -7,9 +7,12 @@ import org.springframework.stereotype.Repository;
 
 import com.example.demo.order.entity.Order;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+
 @Repository
 public interface OrderRepository extends JpaRepository<Order, Long> {
 
-	List<Order> findByUserId(Long userId);
+	Page<Order> findByUserId(Long userId, Pageable pageable);
 
 }

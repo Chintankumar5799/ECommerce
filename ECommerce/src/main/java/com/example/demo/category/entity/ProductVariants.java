@@ -14,35 +14,38 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
+import jakarta.persistence.Version;
 
 @Entity
-@Table(name="product_variant")
+@Table(name = "product_variant")
 public class ProductVariants extends BaseEntity {
-	
+
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long variantId;
-	
-	
+
 	@ManyToOne
-	@JoinColumn(name="productId")
+	@JoinColumn(name = "productId")
 	private Product product;
-	
-	@Column(nullable=false)
+
+	@Column(nullable = false)
 	private Long price;
 
 	private Long offerPrice;
 
 	private Float discount;
-	
+
 	private Long quantity;
-	
-	@Column(name="deleted")
-	private Boolean isDeleted=false;
-	
+
+	@Column(name = "deleted")
+	private Boolean isDeleted = false;
+
 	@JdbcTypeCode(SqlTypes.JSON)
 	@Column(columnDefinition = "jsonb")
 	private JsonNode variantAttributes;
+
+	@Version
+	private Long version;
 
 	public long getVariantId() {
 		return variantId;
@@ -107,7 +110,5 @@ public class ProductVariants extends BaseEntity {
 	public void setVariant_attributes(JsonNode variantAttributes) {
 		this.variantAttributes = variantAttributes;
 	}
-	
-	
 
 }

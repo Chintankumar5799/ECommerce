@@ -62,7 +62,7 @@ public class SecurityConfig {
 
             .authorizeHttpRequests(auth -> auth
             		.dispatcherTypeMatchers(jakarta.servlet.DispatcherType.FORWARD, jakarta.servlet.DispatcherType.ERROR).permitAll()
-                .requestMatchers("/api/auth/login", "/api/auth/register","/api/auth/refresh","/api/auth/sellerRegister","/api/AI/**").permitAll()
+                .requestMatchers("/api/auth/login", "/api/auth/register","/api/auth/refresh","/api/auth/sellerRegister","/api/AI/**", "/actuator/**").permitAll()
                 .requestMatchers("/oauth-success").permitAll()
                 .requestMatchers("/api/user/hi","/api/category/**","/api/product/**","/api/cart/**","/api/order/**").hasAnyRole(AppConstants.ROLE_BUYER,AppConstants.ROLE_SELLER)
 //                .requestMatchers("/api/product/newProduct").hasRole(AppConstants.ROLE_SELLER)
