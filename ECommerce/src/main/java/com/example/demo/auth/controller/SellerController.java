@@ -5,7 +5,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.example.demo.auth.dao.DashboardResponse;
+import com.example.demo.auth.dto.DashboardResponse;
 import com.example.demo.auth.entity.CustomUserDetails;
 import com.example.demo.auth.entity.Dashboard;
 import com.example.demo.auth.repository.SellerRepository;
@@ -17,16 +17,15 @@ public class SellerController {
 
 	private final SellerService sellerService;
 	private final SellerRepository sellerRepository;
-	
+
 	public SellerController(SellerService sellerService, SellerRepository sellerRepository) {
-		this.sellerService=sellerService;
-		this.sellerRepository=sellerRepository;
+		this.sellerService = sellerService;
+		this.sellerRepository = sellerRepository;
 	}
-	
-	
-//	@GetMapping("/dashboard")
-//	public DashboardResponse getDashboard(java.security.Principal principal) {
-//		return sellerService.getDashboard(principal.getName());
-//	}
-//	
+
+	// @GetMapping("/dashboard")
+	// public DashboardResponse getDashboard(java.security.Principal principal) {
+	// return sellerService.getDashboard(principal.getName());
+	// }
+	//
 }

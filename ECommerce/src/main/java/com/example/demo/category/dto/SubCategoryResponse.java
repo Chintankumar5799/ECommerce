@@ -1,4 +1,4 @@
-package com.example.demo.category.dao;
+package com.example.demo.category.dto;
 
 import java.util.List;
 
@@ -15,11 +15,11 @@ import jakarta.persistence.OneToMany;
 import jakarta.validation.constraints.NotBlank;
 
 public class SubCategoryResponse {
-	
-    private Long id;
-    private String subCategoryName;
-    private String categoryName;
-    private String specificationName;
+
+	private Long id;
+	private String subCategoryName;
+	private String categoryName;
+	private String specificationName;
 
 	public Long getId() {
 		return id;
@@ -37,7 +37,6 @@ public class SubCategoryResponse {
 		this.subCategoryName = subCategoryName;
 	}
 
-
 	public String getCategoryName() {
 		return categoryName;
 	}
@@ -54,5 +53,4 @@ public class SubCategoryResponse {
 		this.specificationName = specificationName;
 	}
 
-	
 }

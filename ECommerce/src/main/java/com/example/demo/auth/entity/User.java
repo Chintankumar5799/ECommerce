@@ -4,7 +4,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import com.example.demo.auth.dao.UserStatus;
+import com.example.demo.auth.dto.UserStatus;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import jakarta.persistence.CascadeType;
@@ -23,59 +23,53 @@ import jakarta.persistence.Table;
 import jakarta.persistence.UniqueConstraint;
 import jakarta.validation.constraints.Email;
 
-
-
 @Entity
-@Table(name="users",
-		uniqueConstraints= {
-				@UniqueConstraint(columnNames="email"),
-				@UniqueConstraint(columnNames="mobile_number")
-		})
-public class User extends BaseEntity{
-	
+@Table(name = "users", uniqueConstraints = {
+		@UniqueConstraint(columnNames = "email"),
+		@UniqueConstraint(columnNames = "mobile_number")
+})
+public class User extends BaseEntity {
+
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
-	
-	
-	@Column(nullable = false, length=150)
+
+	@Column(nullable = false, length = 150)
 	@Email
 	private String email;
-	
-	@OneToMany(mappedBy="user",cascade=CascadeType.ALL, orphanRemoval=true)
+
+	@OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
 	private List<Address> address;
-	
-	@Column(name="password_hash",nullable = false, length=255)
+
+	@Column(name = "password_hash", nullable = false, length = 255)
 	@JsonIgnore
 	private String passwordHash;
-	
-	@Column(name="mobile_number",nullable = false, length=15)
+
+	@Column(name = "mobile_number", nullable = false, length = 15)
 	private String mobileNumber;
-	
+
 	@Column(nullable = false)
 	private boolean enabled;
-	
+
 	@Column(nullable = false)
-	private boolean emailVerified=false;
-	
+	private boolean emailVerified = false;
+
 	@Column(nullable = false)
-	private boolean phoneVerified=false;
-	
-	@Column(name="deleted",nullable = false)
+	private boolean phoneVerified = false;
+
+	@Column(name = "deleted", nullable = false)
 	private boolean deleted = false;
-	
+
 	@ManyToMany
-	@JoinTable(name="users_roles",
-	joinColumns=@JoinColumn(name="user_id"),
-	inverseJoinColumns=@JoinColumn(name="role_id"))
-	private Set<Role> roles=new HashSet<>();
-	
-	@Column(name="approved",nullable=false)
-	private boolean approved=false;
-	
+	@JoinTable(name = "users_roles", joinColumns = @JoinColumn(name = "user_id"), inverseJoinColumns = @JoinColumn(name = "role_id"))
+	private Set<Role> roles = new HashSet<>();
+
+	@Column(name = "approved", nullable = false)
+	private boolean approved = false;
+
 	@Enumerated(EnumType.STRING)
-	@Column(name="status",nullable = false)
-	private UserStatus status=UserStatus.PENDING;
+	@Column(name = "status", nullable = false)
+	private UserStatus status = UserStatus.PENDING;
 
 	public Long getId() {
 		return id;
@@ -100,7 +94,6 @@ public class User extends BaseEntity{
 	public void setPassword(String passwordHash) {
 		this.passwordHash = passwordHash;
 	}
-	
 
 	public List<Address> getAddress() {
 		return address;
@@ -118,7 +111,6 @@ public class User extends BaseEntity{
 		this.mobileNumber = mobileNumber;
 	}
 
-	
 	public boolean isEnabled() {
 		return enabled;
 	}
@@ -151,13 +143,13 @@ public class User extends BaseEntity{
 		this.deleted = deleted;
 	}
 
-//	public String getPasswordHash() {
-//		return passwordHash;
-//	}
-//
-//	public void setPasswordHash(String passwordHash) {
-//		this.passwordHash = passwordHash;
-//	}
+	// public String getPasswordHash() {
+	// return passwordHash;
+	// }
+	//
+	// public void setPasswordHash(String passwordHash) {
+	// this.passwordHash = passwordHash;
+	// }
 
 	public Set<Role> getRoles() {
 		return roles;
@@ -194,8 +186,5 @@ public class User extends BaseEntity{
 	public boolean isDeleted() {
 		return deleted;
 	}
-	
-	
-	
 
 }

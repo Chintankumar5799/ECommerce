@@ -1,4 +1,4 @@
-package com.example.demo.category.dao;
+package com.example.demo.category.dto;
 
 import java.util.List;
 
@@ -15,18 +15,18 @@ import jakarta.persistence.OneToMany;
 import jakarta.validation.constraints.NotBlank;
 
 public class ProductRequest {
-	 @NotBlank(message="Name of product is not empty")
-	 private String productName;
+	@NotBlank(message = "Name of product is not empty")
+	private String productName;
 
-	//  @NotBlank(message="Name of product is not empty")
-	 private Long subCategoryId;
-	   
-	//  @NotBlank(message="Name of product is not empty")
-	  private long price;
-	  private long offerPrice;
-	  private float discount;
-	    
-	  private List<ProductVariantRequest> variants;
+	// @NotBlank(message="Name of product is not empty")
+	private Long subCategoryId;
+
+	// @NotBlank(message="Name of product is not empty")
+	private long price;
+	private long offerPrice;
+	private float discount;
+
+	private List<ProductVariantRequest> variants;
 
 	public String getProductName() {
 		return productName;
@@ -75,6 +75,5 @@ public class ProductRequest {
 	public void setVariants(List<ProductVariantRequest> variants) {
 		this.variants = variants;
 	}
-	  
-	  
+
 }

@@ -1,4 +1,4 @@
-package com.example.demo.category.dao;
+package com.example.demo.category.dto;
 
 import com.fasterxml.jackson.databind.JsonNode;
 

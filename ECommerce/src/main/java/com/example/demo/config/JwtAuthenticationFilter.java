@@ -1,4 +1,4 @@
-package com.example.demo.auth.config;
+package com.example.demo.config;
 
 import java.io.IOException;
 
@@ -13,6 +13,7 @@ import org.springframework.security.web.authentication.AuthenticationSuccessHand
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
+import com.example.demo.auth.config.JwtUtil;
 import com.example.demo.auth.controller.AuthController;
 
 import io.jsonwebtoken.ExpiredJwtException;
@@ -31,46 +32,42 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     public JwtAuthenticationFilter(JwtUtil jwtUtil) {
         this.jwtUtil = jwtUtil;
     }
+
     private static final Logger log = LoggerFactory.getLogger(JwtAuthenticationFilter.class);
-	
-   
-    
+
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain chain)
             throws ServletException, IOException {
-    	
-    	
+
         String header = request.getHeader("Authorization");
         if (header != null && header.startsWith("Bearer ")) {
-        	log.info("Authorization header found");
+            log.info("Authorization header found");
             String token = header.substring(7);
-            
+
             try {
-            if (jwtUtil.validateToken(token)) {
-            	
-                UsernamePasswordAuthenticationToken auth =
-                        jwtUtil.getAuthentication(token); // set roles, username, etc.
-                SecurityContextHolder.getContext().setAuthentication(auth);
-//                logger.info("token is valid for {}",token.get
-                log.info("Token is valid");
-                
-                
-            }} catch (ExpiredJwtException ex) {
-            	log.info("Token is Expired");
+                if (jwtUtil.validateToken(token)) {
+
+                    UsernamePasswordAuthenticationToken auth = jwtUtil.getAuthentication(token); // set roles, username,
+                                                                                                 // etc.
+                    SecurityContextHolder.getContext().setAuthentication(auth);
+                    // logger.info("token is valid for {}",token.get
+                    log.info("Token is valid");
+
+                }
+            } catch (ExpiredJwtException ex) {
+                log.info("Token is Expired");
                 response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
                 response.getWriter().write("{\"error\":\"Token Expired\"}");
                 return;
             } catch (SignatureException | MalformedJwtException ex) {
-            	log.info("Token validation failed");
+                log.info("Token validation failed");
                 response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
                 response.getWriter().write("{\"error\":\"Invalid Token\"}");
                 return;
             }
-                
-                
-            }
-        
+
+        }
+
         chain.doFilter(request, response);
     }
-	
-}
 
+}

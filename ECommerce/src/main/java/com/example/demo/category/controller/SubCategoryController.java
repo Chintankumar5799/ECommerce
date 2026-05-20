@@ -11,8 +11,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.example.demo.category.dao.SubCategoryRequest;
-import com.example.demo.category.dao.SubCategoryResponse;
+import com.example.demo.category.dto.SubCategoryRequest;
+import com.example.demo.category.dto.SubCategoryResponse;
 import com.example.demo.category.entity.Category;
 import com.example.demo.category.entity.SubCategory;
 import com.example.demo.category.service.CategoryService;
@@ -26,30 +26,29 @@ import com.example.demo.category.service.SubCategoryService;
 @RequestMapping("/api/subcategory")
 public class SubCategoryController {
 
-
 	private final SubCategoryService subCategoryService;
-	
-	private final static Logger log=LoggerFactory.getLogger(SubCategoryController.class);
-	
+
+	private final static Logger log = LoggerFactory.getLogger(SubCategoryController.class);
+
 	public SubCategoryController(SubCategoryService subCategoryService) {
-		this.subCategoryService=subCategoryService;
+		this.subCategoryService = subCategoryService;
 	}
-	
+
 	@GetMapping("/getHi")
 	public String getHi() {
 		return "Hello askjnas";
 	}
-	
+
 	@PostMapping("/newSubCategory")
-	public ResponseEntity<SubCategoryResponse> addSubCategory(@Valid @RequestBody SubCategoryRequest subCategoryRequest){
-		SubCategoryResponse subCategory=subCategoryService.addSubCategory(subCategoryRequest);
-		log.info("Add subcategory with name"+subCategory.toString());
+	public ResponseEntity<SubCategoryResponse> addSubCategory(
+			@Valid @RequestBody SubCategoryRequest subCategoryRequest) {
+		SubCategoryResponse subCategory = subCategoryService.addSubCategory(subCategoryRequest);
+		log.info("Add subcategory with name" + subCategory.toString());
 		return ResponseEntity.status(HttpStatus.CREATED).body(subCategory);
 	}
-	
-	
-//	@PostMapping("/getSubcategory")
-//	public ResponseEntity<P> getSubcategory(@categoryId){
-//		
-//	}
+
+	// @PostMapping("/getSubcategory")
+	// public ResponseEntity<P> getSubcategory(@categoryId){
+	//
+	// }
 }

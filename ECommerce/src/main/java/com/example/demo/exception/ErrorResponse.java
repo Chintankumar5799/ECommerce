@@ -1,4 +1,4 @@
-package com.example.demo.auth.exception;
+package com.example.demo.exception;
 
 public class ErrorResponse {
     private String message;

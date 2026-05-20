@@ -1,4 +1,4 @@
-package com.example.demo.auth.dao;
+package com.example.demo.auth.dto;
 
 public enum UserStatus {
 	PENDING,

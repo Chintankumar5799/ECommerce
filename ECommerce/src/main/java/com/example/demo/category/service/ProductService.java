@@ -20,10 +20,10 @@ import org.springframework.web.server.ResponseStatusException;
 import org.springframework.http.HttpStatus;
 
 import com.example.demo.category.controller.ProductController;
-import com.example.demo.category.dao.ProductRequest;
-import com.example.demo.category.dao.ProductResponse;
-import com.example.demo.category.dao.ProductVariantRequest;
-import com.example.demo.category.dao.PurchaseResponse;
+import com.example.demo.category.dto.ProductRequest;
+import com.example.demo.category.dto.ProductResponse;
+import com.example.demo.category.dto.ProductVariantRequest;
+import com.example.demo.category.dto.PurchaseResponse;
 import com.example.demo.category.entity.Category;
 import com.example.demo.category.entity.Images;
 import com.example.demo.category.entity.Product;

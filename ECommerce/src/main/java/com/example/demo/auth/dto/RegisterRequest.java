@@ -1,4 +1,4 @@
-package com.example.demo.auth.dao;
+package com.example.demo.auth.dto;
 
 import java.time.Instant;
 
@@ -13,79 +13,78 @@ import java.util.List;
 
 public class RegisterRequest {
 
+	@NotBlank(message = "Email is required")
+	@Email(message = "Invalid email format")
+	@Size(max = 150, message = "Email must not exceed 150 characters")
+	private String email;
 
-    @NotBlank(message = "Email is required")
-    @Email(message = "Invalid email format")
-    @Size(max = 150, message = "Email must not exceed 150 characters")
-    private String email;
+	@NotBlank(message = "Password is required")
+	@Pattern(regexp = "^(?=.*[A-Z])(?=.*[a-z])(?=.*[@$!%*?&])[A-Za-z\\d@$!%*?&]{8,14}$", message = "Password must be 8-14 characters with at least one uppercase, one lowercase, and one special character.")
+	// @Size(min = 8, max = 255, message = "Password must be at least 8 characters")
+	private String passwordHash;
 
+	@NotBlank(message = "Mobile number is required")
+	private String mobileNumber;
 
-    @NotBlank(message = "Password is required")
-    @Pattern(
- 	       regexp = "^(?=.*[A-Z])(?=.*[a-z])(?=.*[@$!%*?&])[A-Za-z\\d@$!%*?&]{8,14}$", 
- 	       message = "Password must be 8-14 characters with at least one uppercase, one lowercase, and one special character."
- 	    )
-//    @Size(min = 8, max = 255, message = "Password must be at least 8 characters")
-    private String passwordHash;
+	@NotNull(message = "Address is required")
+	private List<Address> address;
 
-
-    @NotBlank(message = "Mobile number is required")
-    private String mobileNumber;
-    
-    @NotNull(message= "Address is required")
-    private List<Address> address;
-    
-    
 	public String getEmail() {
 		return email;
 	}
+
 	public void setEmail(String email) {
 		this.email = email;
 	}
+
 	public String getPasswordHash() {
 		return passwordHash;
 	}
+
 	public void setPasswordHash(String passwordHash) {
 		this.passwordHash = passwordHash;
 	}
+
 	public String getMobileNumber() {
 		return mobileNumber;
 	}
+
 	public void setMobileNumber(String mobileNumber) {
 		this.mobileNumber = mobileNumber;
 	}
+
 	public List<Address> getAddress() {
 		return address;
 	}
+
 	public void setAddress(List<Address> address) {
 		this.address = address;
 	}
-	
-	
+
 	// public boolean isEnabled() {
-	// 	return enabled;
+	// return enabled;
 	// }
 	// public void setEnabled(boolean enabled) {
-	// 	this.enabled = enabled;
+	// this.enabled = enabled;
 	// }
-	
+
 	// public boolean isDeleted() {
-	// 	return deleted;
+	// return deleted;
 	// }
 	// public void setDeleted(boolean deleted) {
-	// 	this.deleted = deleted;
+	// this.deleted = deleted;
 	// }
 	// public Instant getCreatedAt() {
-	// 	return createdAt;
+	// return createdAt;
 	// }
 	// public void setCreatedAt(Instant createdAt) {
-	// 	this.createdAt = createdAt;
+	// this.createdAt = createdAt;
 	// }
 	// public Instant getUpdatedAt() {
-	// 	return updatedAt;
+	// return updatedAt;
 	// }
 	// public void setUpdatedAt(Instant updatedAt) {
-	// 	this.updatedAt = updatedAt;
+	// this.updatedAt = updatedAt;
 	// }
-	
+
 }

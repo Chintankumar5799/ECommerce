@@ -1,4 +1,4 @@
-package com.example.demo.category.dao;
+package com.example.demo.category.dto;
 
 import java.util.List;
 
@@ -15,19 +15,16 @@ import jakarta.persistence.OneToMany;
 import jakarta.validation.constraints.NotBlank;
 
 public class SubCategoryRequest {
-	
 
 	@NotBlank(message = "Sub-Category name is required")
-    private String subCategoryName;
+	private String subCategoryName;
 
 	private Long id;
-//	@NotNull(message = "Category of Sub-Category is required")
-    private Long categoryId;
+	// @NotNull(message = "Category of Sub-Category is required")
+	private Long categoryId;
 
-    private String specificationName;
+	private String specificationName;
 
-    
-    
 	public Long getId() {
 		return id;
 	}
@@ -60,5 +57,4 @@ public class SubCategoryRequest {
 		this.specificationName = specificationName;
 	}
 
-	
 }

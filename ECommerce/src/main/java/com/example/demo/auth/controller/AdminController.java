@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.example.demo.auth.dao.RegisterRequest;
+import com.example.demo.auth.dto.RegisterRequest;
 import com.example.demo.auth.service.UserService;
 
 import jakarta.validation.Valid;
@@ -19,20 +19,18 @@ import jakarta.validation.Valid;
 @RestController
 @RequestMapping("/api/auth")
 public class AdminController {
-	
+
 	// Admin and Seller Details
 	private static final Logger log = LoggerFactory.getLogger(AdminController.class);
-	
+
 	@Autowired
 	private UserService userService;
 
-	@PostMapping(value="/sellerRegister",consumes = "application/json", produces = "application/json")
+	@PostMapping(value = "/sellerRegister", consumes = "application/json", produces = "application/json")
 	public String registerUser(@Valid @RequestBody RegisterRequest registerRequest) {
 		log.info("Registering new seller: {}", registerRequest.getEmail());
-		userService.register(registerRequest,"SELLER");
+		userService.register(registerRequest, "SELLER");
 		return "Your account is pending for Approval!";
 	}
-	
-	
 
 }

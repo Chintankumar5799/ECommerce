@@ -1,9 +1,9 @@
-package com.example.demo.order.dao;
+package com.example.demo.order.dto;
 
 import java.util.List;
 
 public class OrderResponse {
-    
+
     private Long id;
     private Long userId;
     private String orderStatus;

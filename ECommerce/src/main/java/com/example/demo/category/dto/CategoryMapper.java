@@ -1,4 +1,4 @@
-package com.example.demo.category.dao;
+package com.example.demo.category.dto;
 
 import java.util.List;
 
@@ -16,6 +16,6 @@ public interface CategoryMapper {
 
     @Mapping(source = "category.categoryName", target = "categoryName")
     SubCategoryResponse toSubCategoryResponse(SubCategory subCategory);
-    
+
     List<CategoryResponse> toCategoryResponseList(List<Category> categories);
 }

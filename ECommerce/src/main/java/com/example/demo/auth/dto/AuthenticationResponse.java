@@ -1,24 +1,22 @@
-package com.example.demo.auth.dao;
+package com.example.demo.auth.dto;
 
 public class AuthenticationResponse {
-	  private String shortJwt;
-	  private String longJwt;
-	  
-	  
+	private String shortJwt;
+	private String longJwt;
 
 	public AuthenticationResponse() {
 		super();
-	
+
 	}
 
 	public AuthenticationResponse(String shortJwt) {
-		this.shortJwt=shortJwt;
-		
+		this.shortJwt = shortJwt;
+
 	}
 
 	public AuthenticationResponse(String shortJwt, String longJwt) {
-		this.shortJwt=shortJwt;
-		this.longJwt=longJwt;
+		this.shortJwt = shortJwt;
+		this.longJwt = longJwt;
 	}
 
 	public String getShortJwt() {
@@ -37,6 +35,4 @@ public class AuthenticationResponse {
 		this.longJwt = longJwt;
 	}
 
-	
-	
 }

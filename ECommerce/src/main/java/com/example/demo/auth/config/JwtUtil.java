@@ -14,7 +14,7 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 import com.example.demo.ECommerceApplication;
-import com.example.demo.auth.dao.AppConstants;
+import com.example.demo.auth.dto.AppConstants;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;
@@ -27,111 +27,110 @@ import io.jsonwebtoken.security.Keys;
 @Component
 public class JwtUtil {
 
+	@Value("${jwt.secret}")
+	private String secretKey;
 
-    @Value("${jwt.secret}")
-    private String secretKey;
-    
-    private static final Logger log = LoggerFactory.getLogger(JwtUtil.class);
-	
+	private static final Logger log = LoggerFactory.getLogger(JwtUtil.class);
 
-    public String generateToken(UserDetails userDetails) {
-		   List<String> roles = userDetails.getAuthorities().stream()
-		            .map(GrantedAuthority::getAuthority)
-		            .toList();
-		   
-	       log.info("Token generation is initiated for {} ",userDetails.getUsername());
-	        return Jwts.builder()
-	                .setSubject(userDetails.getUsername())
-	                .claim("roles", roles)
-	                .claim("type", "ACCESS") // Added type claim
-	                .setIssuedAt(new Date())
-	                .setExpiration(new Date(System.currentTimeMillis() + AppConstants.SHORT_EXPIRATION))
-	                .signWith(Keys.hmacShaKeyFor(secretKey.getBytes(StandardCharsets.UTF_8)), SignatureAlgorithm.HS256)
-	                .compact();
-	    }
-	   
-	   public String generateRefreshToken(UserDetails userDetails) {
-		   List<String> roles = userDetails.getAuthorities().stream()
-		            .map(GrantedAuthority::getAuthority)
-		            .toList();
-		   
-		   log.info("Refresh Token generation is initiated for {} ",userDetails.getUsername());
-	        return Jwts.builder()
-	                .setSubject(userDetails.getUsername())
-	                .claim("roles", roles)
-	                .claim("type", "REFRESH") // Added type claim
-	                .setIssuedAt(new Date())
-	                .setExpiration(new Date(System.currentTimeMillis() + AppConstants.LONG_EXPIRATION))
-	                .signWith(Keys.hmacShaKeyFor(secretKey.getBytes(StandardCharsets.UTF_8)), SignatureAlgorithm.HS256)
-	                .compact();
-	    }
-	   
-//	   public String generateToken(String username) {
-//		    return Jwts.builder()
-//		               .setSubject(username)
-//		               .setIssuedAt(new Date())
-//		               .setExpiration(new Date(System.currentTimeMillis() + 1000 * 60 * 60 * 10))
-//		               .signWith(SignatureAlgorithm.HS256, secretKey)
-//		               .compact();
-//		}
+	public String generateToken(UserDetails userDetails) {
+		List<String> roles = userDetails.getAuthorities().stream()
+				.map(GrantedAuthority::getAuthority)
+				.toList();
 
-	   public boolean validateToken(String token) {
-		        
-		        log.info("Token validation is initiated");
-	            Claims claims = Jwts.parserBuilder()
-	                    .setSigningKey(Keys.hmacShaKeyFor(secretKey.getBytes(StandardCharsets.UTF_8)))
-	                    .build()
-	                    .parseClaimsJws(token)
-	                    .getBody();
-	            
-	            String type = claims.get("type", String.class);
-	            System.out.println("validate token type"+type);
-	            return "ACCESS".equals(type) && claims.getExpiration().after(new Date());
-	    }
-	   
-	   public boolean validateRefreshToken(String token) {
-	        try {
-	        	 log.info("Token validation for refresh token is initiated");
-	             Claims claims = Jwts.parserBuilder()
-	                    .setSigningKey(Keys.hmacShaKeyFor(secretKey.getBytes(StandardCharsets.UTF_8)))
-	                    .build()
-	                    .parseClaimsJws(token)
-	                    .getBody();
-	            
-	            String type = claims.get("type", String.class);
-	            return "REFRESH".equals(type) && claims.getExpiration().after(new Date());
-	        } catch (Exception e) {
-	            return false; 
-	        }
-	    }
+		log.info("Token generation is initiated for {} ", userDetails.getUsername());
+		return Jwts.builder()
+				.setSubject(userDetails.getUsername())
+				.claim("roles", roles)
+				.claim("type", "ACCESS") // Added type claim
+				.setIssuedAt(new Date())
+				.setExpiration(new Date(System.currentTimeMillis() + AppConstants.SHORT_EXPIRATION))
+				.signWith(Keys.hmacShaKeyFor(secretKey.getBytes(StandardCharsets.UTF_8)), SignatureAlgorithm.HS256)
+				.compact();
+	}
 
-	    // Convert token to Spring Security authentication
-	    public UsernamePasswordAuthenticationToken getAuthentication(String token) {
-	    	
-	        Claims claims = Jwts.parserBuilder()
-	                .setSigningKey(Keys.hmacShaKeyFor(secretKey.getBytes(StandardCharsets.UTF_8)))
-	                .build()
-	                .parseClaimsJws(token)
-	                .getBody();
-	        log.info("Authentication of loken is initiated");
-	       
-	        String username = claims.getSubject();
-	        List<String> roles = claims.get("roles", List.class);
-	        log.info("Token contains roles {} ",roles.toArray());
+	public String generateRefreshToken(UserDetails userDetails) {
+		List<String> roles = userDetails.getAuthorities().stream()
+				.map(GrantedAuthority::getAuthority)
+				.toList();
 
-	        List<SimpleGrantedAuthority> authorities = roles.stream()
-	                .map(SimpleGrantedAuthority::new)
-	                .toList();
-	        
-	        if (username == null) return null;
+		log.info("Refresh Token generation is initiated for {} ", userDetails.getUsername());
+		return Jwts.builder()
+				.setSubject(userDetails.getUsername())
+				.claim("roles", roles)
+				.claim("type", "REFRESH") // Added type claim
+				.setIssuedAt(new Date())
+				.setExpiration(new Date(System.currentTimeMillis() + AppConstants.LONG_EXPIRATION))
+				.signWith(Keys.hmacShaKeyFor(secretKey.getBytes(StandardCharsets.UTF_8)), SignatureAlgorithm.HS256)
+				.compact();
+	}
 
-	        // For demo, we give a default ROLE_USER
-	        return new UsernamePasswordAuthenticationToken(
-	                username,
-	                null,
-	                authorities
-//	                Collections.singletonList(new SimpleGrantedAuthority("ROLE_USER"))
-	        );
-	    }
-	
+	// public String generateToken(String username) {
+	// return Jwts.builder()
+	// .setSubject(username)
+	// .setIssuedAt(new Date())
+	// .setExpiration(new Date(System.currentTimeMillis() + 1000 * 60 * 60 * 10))
+	// .signWith(SignatureAlgorithm.HS256, secretKey)
+	// .compact();
+	// }
+
+	public boolean validateToken(String token) {
+
+		log.info("Token validation is initiated");
+		Claims claims = Jwts.parserBuilder()
+				.setSigningKey(Keys.hmacShaKeyFor(secretKey.getBytes(StandardCharsets.UTF_8)))
+				.build()
+				.parseClaimsJws(token)
+				.getBody();
+
+		String type = claims.get("type", String.class);
+		System.out.println("validate token type" + type);
+		return "ACCESS".equals(type) && claims.getExpiration().after(new Date());
+	}
+
+	public boolean validateRefreshToken(String token) {
+		try {
+			log.info("Token validation for refresh token is initiated");
+			Claims claims = Jwts.parserBuilder()
+					.setSigningKey(Keys.hmacShaKeyFor(secretKey.getBytes(StandardCharsets.UTF_8)))
+					.build()
+					.parseClaimsJws(token)
+					.getBody();
+
+			String type = claims.get("type", String.class);
+			return "REFRESH".equals(type) && claims.getExpiration().after(new Date());
+		} catch (Exception e) {
+			return false;
+		}
+	}
+
+	// Convert token to Spring Security authentication
+	public UsernamePasswordAuthenticationToken getAuthentication(String token) {
+
+		Claims claims = Jwts.parserBuilder()
+				.setSigningKey(Keys.hmacShaKeyFor(secretKey.getBytes(StandardCharsets.UTF_8)))
+				.build()
+				.parseClaimsJws(token)
+				.getBody();
+		log.info("Authentication of loken is initiated");
+
+		String username = claims.getSubject();
+		List<String> roles = claims.get("roles", List.class);
+		log.info("Token contains roles {} ", roles.toArray());
+
+		List<SimpleGrantedAuthority> authorities = roles.stream()
+				.map(SimpleGrantedAuthority::new)
+				.toList();
+
+		if (username == null)
+			return null;
+
+		// For demo, we give a default ROLE_USER
+		return new UsernamePasswordAuthenticationToken(
+				username,
+				null,
+				authorities
+		// Collections.singletonList(new SimpleGrantedAuthority("ROLE_USER"))
+		);
+	}
+
 }

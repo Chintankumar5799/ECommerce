@@ -1,7 +1,7 @@
-package com.example.demo.order.dao;
+package com.example.demo.order.dto;
 
 public class OrderItemResponse {
-    
+
     private Long id;
     private Long productId;
     private Long variantId;

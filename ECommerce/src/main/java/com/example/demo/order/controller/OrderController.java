@@ -17,11 +17,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.example.demo.helpdesk.TicketService;
-import com.example.demo.order.dao.OrderItemResponse;
-import com.example.demo.order.dao.OrderResponse;
-import com.example.demo.order.entity.Order;
-import com.example.demo.order.entity.OrderItem;
+import com.example.demo.order.dto.OrderItemResponse;
+import com.example.demo.order.dto.OrderResponse;
 import com.example.demo.order.service.OrderService;
 
 @RestController
