@@ -35,4 +35,4 @@ build/
 .env
 
 
-*.sql
+*/data_backup.sql
