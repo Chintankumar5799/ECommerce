@@ -33,3 +33,6 @@ build/
 .vscode/
 
 .env
+
+
+db/migration/data_backup.sql

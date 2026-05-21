@@ -11,7 +11,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
-import com.example.demo.auth.config.OAuthSuccessHandler;
 import com.example.demo.auth.dto.DashboardResponse;
 import com.example.demo.auth.entity.CustomUserDetails;
 import com.example.demo.auth.entity.User;

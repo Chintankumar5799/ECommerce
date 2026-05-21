@@ -1,7 +1,7 @@
 package com.example.demo.auth.controller;
 
 import java.util.Map;
-
+import com.example.demo.auth.dto.AuthenticationResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,18 +10,19 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.example.demo.auth.config.JwtUtil;
 import com.example.demo.auth.dto.AuthenticationResponse;
 import com.example.demo.auth.dto.LoginRequest;
 import com.example.demo.auth.dto.RegisterRequest;
 import com.example.demo.auth.entity.User;
 import com.example.demo.auth.service.UserService;
+import com.example.demo.config.JwtUtil;
 import com.example.demo.config.SecurityConfig;
 
 import jakarta.validation.Valid;
@@ -74,15 +75,12 @@ public class AuthController {
 
 			User user = userRepository.findByEmail(request.getEmail());
 			if (user == null) {
-				System.out.println("ERROR: User found by service but not by repository in controller!");
+				log.error("User found by service but not by repository in controller!");
 				return ResponseEntity.status(500).body("User not found in repository");
 			}
-			System.out.println("DEBUG: User ID: " + user.getId());
+			log.info("User ID: " + user.getId());
 
-			java.util.Map<String, Object> response = new java.util.HashMap<>();
-			response.put("accessToken", accessToken);
-			response.put("refreshToken", refreshToken);
-			response.put("userId", user.getId());
+			AuthenticationResponse response = new AuthenticationResponse(accessToken, refreshToken, user.getId());
 
 			return ResponseEntity.ok(response);
 		} catch (org.springframework.security.authentication.BadCredentialsException e) {
@@ -105,8 +103,8 @@ public class AuthController {
 			log.info("Refresh token request raised by {} ....", userDetails.getUsername());
 
 			String newAccessToken = jwtUtil.generateToken(userDetails);
-			return ResponseEntity.ok(
-					Map.of("accessToken", newAccessToken));
+			AuthenticationResponse response = new AuthenticationResponse(newAccessToken);
+			return ResponseEntity.ok(response);
 		}
 
 		// log.warn("Refresh token request cancelled for ....",request);
@@ -119,5 +117,14 @@ public class AuthController {
 
 	// I will now clean up the commented out code in AuthController to make it look
 	// professional as requested.
+
+	@GetMapping("/oauth-success")
+	public ResponseEntity<?> oauthSuccess(@RequestParam String accessToken,
+			@RequestParam String refreshToken) {
+		AuthenticationResponse response = new AuthenticationResponse();
+		response.setAccessToken(accessToken);
+		response.setRefreshToken(refreshToken);
+		return ResponseEntity.ok(response);
+	}
 
 }

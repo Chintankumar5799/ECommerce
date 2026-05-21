@@ -13,7 +13,6 @@ import org.springframework.security.web.authentication.AuthenticationSuccessHand
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
-import com.example.demo.auth.config.JwtUtil;
 import com.example.demo.auth.controller.AuthController;
 
 import io.jsonwebtoken.ExpiredJwtException;

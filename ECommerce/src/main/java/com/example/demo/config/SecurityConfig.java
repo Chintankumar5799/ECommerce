@@ -25,7 +25,6 @@ import org.springframework.security.web.authentication.HttpStatusEntryPoint;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.http.HttpStatus;
 
-import com.example.demo.auth.config.JwtUtil;
 import com.example.demo.auth.dto.AppConstants;
 import com.example.demo.auth.service.UserService;
 
@@ -37,10 +36,13 @@ public class SecurityConfig {
 
     private final UserService userService;
     private final JwtAuthenticationFilter jwtAuthenticationFilter;
+    private final OAuthSuccessHandler oAuthSuccessHandler;
 
-    public SecurityConfig(UserService userService, JwtAuthenticationFilter jwtAuthenticationFilter) {
+    public SecurityConfig(UserService userService, JwtAuthenticationFilter jwtAuthenticationFilter,
+            OAuthSuccessHandler oAuthSuccessHandler) {
         this.userService = userService;
         this.jwtAuthenticationFilter = jwtAuthenticationFilter;
+        this.oAuthSuccessHandler = oAuthSuccessHandler;
     }
 
     private static final Logger log = LoggerFactory.getLogger(SecurityConfig.class);
@@ -78,10 +80,8 @@ public class SecurityConfig {
                         .anyRequest().authenticated()
 
                 )
-                // .oauth2Login(oauth2 -> oauth2
-                //// .defaultSuccessUrl("/home", true)
-                // .successHandler(oAuthSuccessHandler)
-                // )
+                .oauth2Login(oauth2 -> oauth2
+                        .successHandler(oAuthSuccessHandler))
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
         return http.build();
     }

@@ -27,7 +27,7 @@ public class AdminController {
 	private UserService userService;
 
 	@PostMapping(value = "/sellerRegister", consumes = "application/json", produces = "application/json")
-	public String registerUser(@Valid @RequestBody RegisterRequest registerRequest) {
+	public String registerSeller(@Valid @RequestBody RegisterRequest registerRequest) {
 		log.info("Registering new seller: {}", registerRequest.getEmail());
 		userService.register(registerRequest, "SELLER");
 		return "Your account is pending for Approval!";

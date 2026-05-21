@@ -5,7 +5,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.example.demo.auth.dto.DashboardResponse;
+
 import com.example.demo.auth.entity.CustomUserDetails;
 import com.example.demo.auth.entity.Dashboard;
 import com.example.demo.auth.repository.SellerRepository;

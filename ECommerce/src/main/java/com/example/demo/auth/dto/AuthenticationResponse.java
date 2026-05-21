@@ -1,38 +1,45 @@
 package com.example.demo.auth.dto;
 
 public class AuthenticationResponse {
-	private String shortJwt;
-	private String longJwt;
+	private String accessToken;
+	private String refreshToken;
+	private Long userId;
 
 	public AuthenticationResponse() {
 		super();
-
 	}
 
-	public AuthenticationResponse(String shortJwt) {
-		this.shortJwt = shortJwt;
-
+	public AuthenticationResponse(String accessToken) {
+		this.accessToken = accessToken;
 	}
 
-	public AuthenticationResponse(String shortJwt, String longJwt) {
-		this.shortJwt = shortJwt;
-		this.longJwt = longJwt;
+	public AuthenticationResponse(String accessToken, String refreshToken, Long userId) {
+		this.accessToken = accessToken;
+		this.refreshToken = refreshToken;
+		this.userId = userId;
 	}
 
-	public String getShortJwt() {
-		return shortJwt;
+	public String getAccessToken() {
+		return accessToken;
 	}
 
-	public void setShortJwt(String shortJwt) {
-		this.shortJwt = shortJwt;
+	public void setAccessToken(String accessToken) {
+		this.accessToken = accessToken;
 	}
 
-	public String getLongJwt() {
-		return longJwt;
+	public String getRefreshToken() {
+		return refreshToken;
 	}
 
-	public void setLongJwt(String longJwt) {
-		this.longJwt = longJwt;
+	public void setRefreshToken(String refreshToken) {
+		this.refreshToken = refreshToken;
 	}
 
+	public Long getUserId() {
+		return userId;
+	}
+
+	public void setUserId(Long userId) {
+		this.userId = userId;
+	}
 }
