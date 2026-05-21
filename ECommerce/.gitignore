@@ -35,4 +35,4 @@ build/
 .env
 
 
-db/migration/data_backup.sql
+*.sql
