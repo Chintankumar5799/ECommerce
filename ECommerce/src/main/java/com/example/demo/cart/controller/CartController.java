@@ -33,39 +33,48 @@ public class CartController {
 	}
 
 	@PostMapping("/addToCart")
-	public ResponseEntity<CartResponse> addToCart(@RequestParam Long userId, @RequestParam Long variantId,
+	public ResponseEntity<CartResponse> addToCart(@AuthenticationPrincipal CustomUserPrincipal principal, @RequestParam Long variantId,
 			@RequestParam int quantity) {
+
+		Long userId = principal.getUserId();
 		log.info("User {} added variantId {} with {} quantity in Cart.", userId, variantId, quantity);
 		CartResponse cartResponse = cartService.addToCart(userId, variantId, quantity);
 		return ResponseEntity.status(HttpStatus.ACCEPTED).body(cartResponse);
 	}
 
 	@PostMapping("/wishlist")
-	public ResponseEntity<CartResponse> addToWishlist(@RequestParam Long userId, @RequestParam Long variantId,
+	public ResponseEntity<CartResponse> addToWishlist(@AuthenticationPrincipal CustomUserPrincipal principal, @RequestParam Long variantId,
 			@RequestParam int quantity) {
+
+		Long userId = principal.getUserId();
 		log.info("User {} added, variantId {} with {} quantity in Wishlist", userId, variantId, quantity);
 		CartResponse cartResponse = cartService.addToWishlist(userId, variantId, quantity);
 		return ResponseEntity.status(HttpStatus.ACCEPTED).body(cartResponse);
 	}
 
 	@PutMapping("/changeStatus")
-	public ResponseEntity<CartResponse> changeStatus(@RequestParam Long userId, @RequestParam Long variantId) {
+	public ResponseEntity<CartResponse> changeStatus(@AuthenticationPrincipal CustomUserPrincipal principal, @RequestParam Long variantId) {
+		
+		Long userId = principal.getUserId();
 		log.info("User {} change status of variantId {}", userId, variantId);
 		CartResponse cartResponse = cartService.changeStatus(userId, variantId);
 		return ResponseEntity.status(HttpStatus.ACCEPTED).body(cartResponse);
 	}
 
 	@GetMapping("/getCart")
-	public ResponseEntity<List<CartResponse>> getCartDetails(@RequestParam Long userId) {
+	public ResponseEntity<List<CartResponse>> getCartDetails(@AuthenticationPrincipal CustomUserPrincipal principal) {
+		Long userId=principal.getUserId();
 		log.info("User {} just get details of Cart.", userId);
 		List<CartResponse> cartResponse = cartService.getCartDetails(userId);
 		return ResponseEntity.status(HttpStatus.ACCEPTED).body(cartResponse);
 	}
 
 	@DeleteMapping("/remove")
-	public ResponseEntity<String> removeFromCart(@RequestParam Long id) {
-		log.info("User remove item {} ", id);
-		String remove = cartService.removeItem(id);
+	public ResponseEntity<String> removeFromCart(@AuthenticationPrincipal CustomUserPrincipal principal, @RequestParam Long variantId) {
+		
+		Long userId = principal.getUserId();
+		log.info("User {} remove item {} ", userId,variantId);
+		String remove = cartService.removeItem(userId,variantId);
 		return ResponseEntity.status(HttpStatus.ACCEPTED).body("Item remove Successfully");
 	}
 

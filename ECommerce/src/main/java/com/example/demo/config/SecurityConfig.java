@@ -47,6 +47,9 @@ public class SecurityConfig {
 
     private static final Logger log = LoggerFactory.getLogger(SecurityConfig.class);
 
+    @Value("${app.cors.allowed-origins}")
+    private List<String> allowedOrigins;
+
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
 
@@ -68,13 +71,16 @@ public class SecurityConfig {
                         .dispatcherTypeMatchers(jakarta.servlet.DispatcherType.FORWARD,
                                 jakarta.servlet.DispatcherType.ERROR)
                         .permitAll()
-                        .requestMatchers("/api/auth/login", "/api/auth/register", "/api/auth/refresh",
-                                "/api/auth/sellerRegister", "/api/AI/**", "/actuator/**")
+                        .requestMatchers("/api/auth/login", "/api/auth/register", "/oauth-success","/api/auth/refresh",
+                                "/api/auth/sellerRegister", "/api/AI/**", "/actuator/health")
                         .permitAll()
-                        .requestMatchers("/oauth-success").permitAll()
+                        // .requestMatchers("/oauth-success").permitAll()
                         .requestMatchers("/api/user/hi", "/api/category/**", "/api/product/**", "/api/cart/**",
                                 "/api/order/**")
                         .hasAnyRole(AppConstants.ROLE_BUYER, AppConstants.ROLE_SELLER)
+                        .requestMatchers("/actuator/**")
+                        .hasRole(AppConstants.ROLE_ADMIN)
+
                         // .requestMatchers("/api/product/newProduct").hasRole(AppConstants.ROLE_SELLER)
                         // .requestMatchers("/api/seller/").hasRole(AppConstants.ROLE_SELLER)
                         .anyRequest().authenticated()
@@ -106,9 +112,8 @@ public class SecurityConfig {
     public org.springframework.web.cors.CorsConfigurationSource corsConfigurationSource() {
         org.springframework.web.cors.CorsConfiguration configuration = new org.springframework.web.cors.CorsConfiguration();
         // Allow likely frontend origins (localhost:3000 for React, etc.)
-        // Allow likely frontend origins (localhost:3000 for React, etc.) and wildcard
-        // for EC2 access
-        configuration.setAllowedOriginPatterns(java.util.List.of("*"));
+        // Configured from application.properties to avoid wide-open CORS
+        configuration.setAllowedOriginPatterns(allowedOrigins);
         configuration.setAllowedMethods(java.util.List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
         configuration.setAllowedHeaders(java.util.List.of("Authorization", "Content-Type"));
         configuration.setAllowCredentials(true);

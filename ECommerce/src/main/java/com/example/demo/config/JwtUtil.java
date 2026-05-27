@@ -32,7 +32,7 @@ public class JwtUtil {
 
 	private static final Logger log = LoggerFactory.getLogger(JwtUtil.class);
 
-	public String generateToken(UserDetails userDetails) {
+	public String generateToken(UserDetails userDetails, Long userId) {
 		List<String> roles = userDetails.getAuthorities().stream()
 				.map(GrantedAuthority::getAuthority)
 				.toList();
@@ -42,13 +42,14 @@ public class JwtUtil {
 				.setSubject(userDetails.getUsername())
 				.claim("roles", roles)
 				.claim("type", "ACCESS") // Added type claim
+				.claim("userId", userId)
 				.setIssuedAt(new Date())
 				.setExpiration(new Date(System.currentTimeMillis() + AppConstants.SHORT_EXPIRATION))
 				.signWith(Keys.hmacShaKeyFor(secretKey.getBytes(StandardCharsets.UTF_8)), SignatureAlgorithm.HS256)
 				.compact();
 	}
 
-	public String generateRefreshToken(UserDetails userDetails) {
+	public String generateRefreshToken(UserDetails userDetails,Long userId) {
 		List<String> roles = userDetails.getAuthorities().stream()
 				.map(GrantedAuthority::getAuthority)
 				.toList();
@@ -58,6 +59,7 @@ public class JwtUtil {
 				.setSubject(userDetails.getUsername())
 				.claim("roles", roles)
 				.claim("type", "REFRESH") // Added type claim
+				.claim("userId", userId)
 				.setIssuedAt(new Date())
 				.setExpiration(new Date(System.currentTimeMillis() + AppConstants.LONG_EXPIRATION))
 				.signWith(Keys.hmacShaKeyFor(secretKey.getBytes(StandardCharsets.UTF_8)), SignatureAlgorithm.HS256)
@@ -113,6 +115,7 @@ public class JwtUtil {
 				.getBody();
 		log.info("Authentication of loken is initiated");
 
+		Long userId=claims.get("userId",Long.class);
 		String username = claims.getSubject();
 		List<String> roles = claims.get("roles", List.class);
 		log.info("Token contains roles {} ", roles.toArray());
@@ -124,13 +127,15 @@ public class JwtUtil {
 		if (username == null)
 			return null;
 
-		// For demo, we give a default ROLE_USER
-		return new UsernamePasswordAuthenticationToken(
-				username,
-				null,
-				authorities
-		// Collections.singletonList(new SimpleGrantedAuthority("ROLE_USER"))
-		);
+
+		return new CustomUserPrincipal(username, "", authorities, userId);
+		// For demo, we give a default ROLE_USER & it fails for get userId
+		// return new UsernamePasswordAuthenticationToken(
+		// 		username,
+		// 		null,
+		// 		authorities
+		// // Collections.singletonList(new SimpleGrantedAuthority("ROLE_USER"))
+		// );
 	}
 
 }

@@ -10,5 +10,6 @@ public class AppConstants {
      // Buyer role
      public static final String ROLE_BUYER = "BUYER";
      public static final String ROLE_SELLER = "SELLER";
+     public static final String ROLE_ADMIN="ADMIN";
 
 }

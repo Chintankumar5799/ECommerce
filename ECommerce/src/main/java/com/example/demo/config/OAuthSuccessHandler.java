@@ -25,15 +25,17 @@ public class OAuthSuccessHandler implements AuthenticationSuccessHandler {
 
 	private JwtUtil jwtUtil;
 	private UserService userService;
+	private UserRepository userRepository;
 
 	@Value("${app.oauth2.redirect-uri}")
 	private String redirectUrl;
 
 	private static final Logger log = LoggerFactory.getLogger(OAuthSuccessHandler.class);
 
-	public OAuthSuccessHandler(JwtUtil jwtUtil, UserService userService) {
+	public OAuthSuccessHandler(JwtUtil jwtUtil, UserService userService, UserRepository userRepository) {
 		this.jwtUtil = jwtUtil;
 		this.userService = userService;
+		this.userRepository = userRepository;
 	}
 
 	@Override
@@ -49,10 +51,13 @@ public class OAuthSuccessHandler implements AuthenticationSuccessHandler {
 
 		OAuth2User oauthUser = (OAuth2User) principal;
 		String email = oauthUser.getAttribute("email");
-
 		userDetails = userService.processOAuthPostLogin(email);
-		String accessToken = jwtUtil.generateToken(userDetails);
-		String refreshToken = jwtUtil.generateRefreshToken(userDetails);
+
+		User user = userRepository.findByEmail(email);
+		Long userId = user.getId();
+
+		String accessToken = jwtUtil.generateToken(userDetails,userId);
+		String refreshToken = jwtUtil.generateRefreshToken(userDetails,userId);
 
 		// Clears the session immediately... (rest same)
 		SecurityContextHolder.clearContext();

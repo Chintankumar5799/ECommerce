@@ -34,15 +34,16 @@ public class OrderController {
 	private final static Logger log = LoggerFactory.getLogger(OrderController.class);
 
 	@PostMapping("/confirm")
-	public ResponseEntity<?> confirmFinalOrder(@RequestParam Long userId, @RequestParam String paymentIntentId) {
+	public ResponseEntity<?> confirmFinalOrder(@AuthenticationPrincipal CustomUserPrincipal principal, @RequestParam String paymentIntentId) {
 
+		Long userId=principal.getUserId();
 		log.info("Order is geeting confirmed for userId " + userId);
 		orderService.createOrderFromCart(userId, paymentIntentId);
 		return ResponseEntity.ok("Order Officially Confirmed!");
 	}
 
 	@GetMapping("/orderHistory")
-	public ResponseEntity<List<OrderResponse>> orderHistory(@RequestParam Long userId,
+	public ResponseEntity<List<OrderResponse>> orderHistory(@AuthenticationPrincipal CustomUserPrincipal principal,
 			@RequestParam(defaultValue = "0") int page,
 			@RequestParam(defaultValue = "10") int size) {
 		log.info("Order history for " + userId);
@@ -53,8 +54,10 @@ public class OrderController {
 	}
 
 	@GetMapping("/orderHistory/orderId")
-	public ResponseEntity<List<OrderItemResponse>> orderHistoryByOrderId(@RequestParam Long userId,
+	public ResponseEntity<List<OrderItemResponse>> orderHistoryByOrderId(@AuthenticationPrincipal CustomUserPrincipal principal,
 			@RequestParam Long orderId) {
+			
+		Long userId=principal.getUserId();
 		log.info("Order history for orderId " + orderId);
 		List<OrderItemResponse> orderList = orderService.orderHistoryByOrderId(userId, orderId);
 		return ResponseEntity.status(HttpStatus.ACCEPTED).body(orderList);

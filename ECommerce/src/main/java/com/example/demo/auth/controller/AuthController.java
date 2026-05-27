@@ -69,11 +69,11 @@ public class AuthController {
 
 			log.info("User just logged in successfully with email id {} ", request.getEmail());
 
-			// Generate JWT
-			String accessToken = jwtUtil.generateToken(userDetails);
-			String refreshToken = jwtUtil.generateRefreshToken(userDetails);
-
 			User user = userRepository.findByEmail(request.getEmail());
+			Long userId = user.getId();
+			// Generate JWT
+			String accessToken = jwtUtil.generateToken(userDetails,userId);
+			String refreshToken = jwtUtil.generateRefreshToken(userDetails, userId);
 			if (user == null) {
 				log.error("User found by service but not by repository in controller!");
 				return ResponseEntity.status(500).body("User not found in repository");
@@ -102,7 +102,10 @@ public class AuthController {
 			UserDetails userDetails = userService.loadUserByUsername(username);
 			log.info("Refresh token request raised by {} ....", userDetails.getUsername());
 
-			String newAccessToken = jwtUtil.generateToken(userDetails);
+			User user = userRepository.findByEmail(username);
+			Long userId = user.getId();
+			
+			String newAccessToken = jwtUtil.generateToken(userDetails, userId);
 			AuthenticationResponse response = new AuthenticationResponse(newAccessToken);
 			return ResponseEntity.ok(response);
 		}

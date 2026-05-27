@@ -91,7 +91,7 @@ public class CartService {
 		}
 
 		Cart updatedStatus = cartRepository.save(cart);
-		System.out.println("Inside updateStatus" + updatedStatus);
+		log.info("Inside updateStatus" + updatedStatus);
 		CartResponse cartResponse = new CartResponse();
 		cartResponse.setId(updatedStatus.getId());
 		cartResponse.setUserId(updatedStatus.getUser().getId());

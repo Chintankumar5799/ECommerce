@@ -27,7 +27,7 @@ public class PaymentController {
 	private final static Logger log = LoggerFactory.getLogger(PaymentController.class);
 
 	@PostMapping("/create-payment-intent")
-	public ResponseEntity<Map<String, Object>> createPaymentIntent(@RequestBody Map<String, Object> data)
+	public ResponseEntity<Map<String, Object>> createPaymentIntent(@RequestBody Map<String, Object> data, @AuthenticationPrincipal CustomUserPrincipal principal)
 			throws StripeException {
 
 		try {
@@ -42,7 +42,7 @@ public class PaymentController {
 
 			log.info("Payment intent created with" + intent.getCustomer());
 			if ("succeeded".equals(intent.getStatus())) {
-				Long userId = Long.parseLong(data.get("userId").toString());
+				Long userId = principal.getUserId();
 				// orderService.createOrderFromCart(userId, intent.getId());
 
 			}
