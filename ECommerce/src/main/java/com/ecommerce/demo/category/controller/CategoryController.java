@@ -1,0 +1,56 @@
+package com.ecommerce.demo.category.controller;
+
+import java.util.List;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
+
+import com.ecommerce.demo.category.dto.CategoryResponse;
+import com.ecommerce.demo.category.entity.Category;
+import com.ecommerce.demo.category.service.CategoryService;
+import com.ecommerce.demo.cart.controller.CartController;
+
+import jakarta.validation.Valid;
+
+@RestController
+@RequestMapping("/api/category")
+public class CategoryController {
+
+	private final CategoryService categoryService;
+	private static final Logger log = LoggerFactory.getLogger(CategoryController.class);
+
+	public CategoryController(CategoryService categoryService) {
+		this.categoryService = categoryService;
+	}
+
+	@GetMapping("/getHi")
+	public String getHi() {
+		return "Hello";
+	}
+
+	// May be for admin only
+	@PreAuthorize("hasRole('SELLER')")
+	@PostMapping("/newCategory")
+	public ResponseEntity<CategoryResponse> addCategory(@RequestParam String categoryName) {
+		log.info("New Category with name " + categoryName + " is added.");
+		CategoryResponse categoryResponse = categoryService.addCategory(categoryName);
+		return ResponseEntity.status(HttpStatus.CREATED).body(categoryResponse);
+	}
+
+	// For admin and seller
+	@GetMapping("/getCategory")
+	public ResponseEntity<List<CategoryResponse>> getAllCategory() {
+		log.info("Get all Category");
+		return ResponseEntity.status(HttpStatus.ACCEPTED).body(categoryService.getAllCategory());
+	}
+
+}

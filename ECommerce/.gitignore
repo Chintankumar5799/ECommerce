@@ -36,3 +36,11 @@ build/
 
 
 */data_backup.sql
+
+*.jar
+
+application.log
+boot.log
+package.log
+logs/
+*.log
