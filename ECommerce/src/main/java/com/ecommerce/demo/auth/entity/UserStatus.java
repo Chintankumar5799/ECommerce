@@ -1,4 +1,4 @@
-package com.ecommerce.demo.auth.dto;
+package com.ecommerce.demo.auth.entity;
 
 public enum UserStatus {
 	PENDING,

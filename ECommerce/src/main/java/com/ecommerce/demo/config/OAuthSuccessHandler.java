@@ -68,7 +68,6 @@ public class OAuthSuccessHandler implements AuthenticationSuccessHandler {
 			session.invalidate();
 		}
 
-		response.setContentType("application/json");
 		response.sendRedirect(redirectUrl + accessToken + "&refreshToken=" + refreshToken);
 
 	}

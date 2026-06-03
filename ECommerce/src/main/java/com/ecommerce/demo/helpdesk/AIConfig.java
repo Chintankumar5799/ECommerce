@@ -15,33 +15,32 @@ import com.ecommerce.demo.category.service.SubCategoryService;
 
 @Configuration
 public class AIConfig {
-	
-	private final static Logger log=LoggerFactory.getLogger(AIConfig.class);
 
-//	public JdbcChatMemoryRepository jdbcChatMemoryRepository() {
-//		return JdbcChatMemoryRepository.builder()
-//				.jdbcTemplate()
-//				.jdbcTemplate()
-//				.build();
-//	}
-	
-	
+	private final static Logger log = LoggerFactory.getLogger(AIConfig.class);
+
+	// public JdbcChatMemoryRepository jdbcChatMemoryRepository() {
+	// return JdbcChatMemoryRepository.builder()
+	// .jdbcTemplate()
+	// .jdbcTemplate()
+	// .build();
+	// }
+
 	@Bean
-	public ChatClient chatClint(ChatClient.Builder builder,JdbcChatMemoryRepository jdbcChatMemoryRepository) {
-//			ChatMemory chatMemory) {
+	public ChatClient chatClient(ChatClient.Builder builder, JdbcChatMemoryRepository jdbcChatMemoryRepository) {
+		// ChatMemory chatMemory) {
 
 		log.info("Inside chatClient method");
-		var chatMemory=MessageWindowChatMemory.builder()
-			.chatMemoryRepository(jdbcChatMemoryRepository)
-			.maxMessages(15)
-			.build();
-		
+		var chatMemory = MessageWindowChatMemory.builder()
+				.chatMemoryRepository(jdbcChatMemoryRepository)
+				.maxMessages(15)
+				.build();
+
 		log.info("JDBC Repo is set for Chat history");
-		
+
 		return builder
-		.defaultSystem("Summarize the response within 400 words.")
-		.defaultAdvisors(new SimpleLoggerAdvisor(), MessageChatMemoryAdvisor.builder(chatMemory).build())
-		.build();
-		
+				.defaultSystem("Summarize the response within 400 words.")
+				.defaultAdvisors(new SimpleLoggerAdvisor(), MessageChatMemoryAdvisor.builder(chatMemory).build())
+				.build();
+
 	}
 }

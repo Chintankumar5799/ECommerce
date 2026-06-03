@@ -3,45 +3,57 @@ package com.ecommerce.demo.order.entity;
 import java.util.List;
 
 import com.ecommerce.demo.auth.entity.BaseEntity;
+import com.ecommerce.demo.auth.entity.User;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import jakarta.annotation.Generated;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
+import com.ecommerce.demo.order.entity.OrderStatus;
 
 @Entity
-@Table(name="orders")
-public class Order extends BaseEntity{
+@Table(name = "orders")
+public class Order extends BaseEntity {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
-    private Long userId;
 
-    private String orderStatus;     // PLACED, SHIPPED, DELIVERED
-    private String paymentStatus;   // PAID, FAILED, PENDING
+	@ManyToOne
+	@JoinColumn(name = "user_id")
+	private User user;
 
-    @Column(name="total_amount")
-    private Long totalAmount;
-    private Long taxAmount;
-    private Long discountAmount;
-    private Long shippingCharge;
+	@Enumerated(EnumType.STRING)
+	private OrderStatus orderStatus; // PLACED, SHIPPED, DELIVERED
+	@Enumerated(EnumType.STRING)
+	private PaymentStatus paymentStatus; // PAID, FAILED, PENDING
 
-    private String paymentMethod;   // CARD, UPI, COD
-    private String transactionId;
+	@Column(name = "total_amount")
+	private Long totalAmount;
+	private Long taxAmount;
+	private Long discountAmount;
+	private Long shippingCharge;
 
-//    private Long shippingAddressId;
-    
-    @OneToMany(mappedBy = "order", cascade = CascadeType.ALL)
-    @JsonIgnore
-    private List<OrderItem> items;
-    
-    private String address;
+	@Enumerated(EnumType.STRING)
+	private PaymentMethod paymentMethod; // CARD, UPI, COD
+	private String transactionId;
+
+	// private Long shippingAddressId;
+
+	@OneToMany(mappedBy = "order", cascade = CascadeType.ALL)
+	@JsonIgnore
+	private List<OrderItem> items;
+
+	private String address;
 
 	public Long getId() {
 		return id;
@@ -51,31 +63,29 @@ public class Order extends BaseEntity{
 		this.id = id;
 	}
 
-	public Long getUserId() {
-		return userId;
+	public User getUser() {
+		return user;
 	}
 
-	public void setUserId(Long userId) {
-		this.userId = userId;
+	public void setUser(User user) {
+		this.user = user;
 	}
 
-	public String getOrderStatus() {
+	public OrderStatus getOrderStatus() {
 		return orderStatus;
 	}
 
-	public void setOrderStatus(String orderStatus) {
+	public void setOrderStatus(OrderStatus orderStatus) {
 		this.orderStatus = orderStatus;
 	}
 
-	public String getPaymentStatus() {
+	public PaymentStatus getPaymentStatus() {
 		return paymentStatus;
 	}
 
-	public void setPaymentStatus(String paymentStatus) {
+	public void setPaymentStatus(PaymentStatus paymentStatus) {
 		this.paymentStatus = paymentStatus;
 	}
-
-	
 
 	public Long getTotalAmount() {
 		return totalAmount;
@@ -109,11 +119,11 @@ public class Order extends BaseEntity{
 		this.shippingCharge = shippingCharge;
 	}
 
-	public String getPaymentMethod() {
+	public PaymentMethod getPaymentMethod() {
 		return paymentMethod;
 	}
 
-	public void setPaymentMethod(String paymentMethod) {
+	public void setPaymentMethod(PaymentMethod paymentMethod) {
 		this.paymentMethod = paymentMethod;
 	}
 
@@ -141,17 +151,37 @@ public class Order extends BaseEntity{
 		this.address = address;
 	}
 
-//	public Long getShippingAddressId() {
-//		return shippingAddressId;
-//	}
-//
-//	public void setShippingAddressId(Long shippingAddressId) {
-//		this.shippingAddressId = shippingAddressId;
-//	}
-	
-	
-    
-    
-    
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + ((id == null) ? 0 : id.hashCode());
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		Order other = (Order) obj;
+		if (id == null) {
+			if (other.id != null)
+				return false;
+		} else if (!id.equals(other.id))
+			return false;
+		return true;
+	}
+
+	// public Long getShippingAddressId() {
+	// return shippingAddressId;
+	// }
+	//
+	// public void setShippingAddressId(Long shippingAddressId) {
+	// this.shippingAddressId = shippingAddressId;
+	// }
 
 }

@@ -11,8 +11,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.ecommerce.demo.auth.entity.User;
 import com.ecommerce.demo.auth.repository.UserRepository;
-import com.ecommerce.demo.cart.dto.CartStatus;
 import com.ecommerce.demo.cart.entity.Cart;
+import com.ecommerce.demo.cart.entity.CartStatus;
 import com.ecommerce.demo.cart.repository.CartRepository;
 import com.ecommerce.demo.category.entity.Product;
 import com.ecommerce.demo.category.entity.ProductVariants;
@@ -22,6 +22,9 @@ import com.ecommerce.demo.order.dto.OrderItemResponse;
 import com.ecommerce.demo.order.dto.OrderResponse;
 import com.ecommerce.demo.order.entity.Order;
 import com.ecommerce.demo.order.entity.OrderItem;
+import com.ecommerce.demo.order.entity.OrderStatus;
+import com.ecommerce.demo.order.entity.PaymentMethod;
+import com.ecommerce.demo.order.entity.PaymentStatus;
 import com.ecommerce.demo.order.repository.OrderItemRepository;
 import com.ecommerce.demo.order.repository.OrderRepository;
 
@@ -69,11 +72,11 @@ public class OrderService {
 		// 3. Create and save the parent Order first (so order has an ID for order
 		// items)
 		Order order = new Order();
-		order.setUserId(userId);
+		order.setUser(user.orElseThrow(() -> new ResourceNotFoundException("User not found")));
 		order.setTransactionId(id);
-		order.setOrderStatus("PLACED"); // PLACED, SHIPPED, DELIVERED
-		order.setPaymentMethod("CARD"); // CARD, UPI, COD
-		order.setPaymentStatus("PAID"); // PAID, FAILED, PENDING
+		order.setOrderStatus(OrderStatus.PLACED); // PLACED, SHIPPED, DELIVERED
+		order.setPaymentMethod(PaymentMethod.CARD); // CARD, UPI, COD
+		order.setPaymentStatus(PaymentStatus.PAID); // PAID, FAILED, PENDING
 		if (user.isPresent() && user.get().getAddress() != null) {
 			order.setAddress(user.get().getAddress().toString());
 		} else {
@@ -217,9 +220,9 @@ public class OrderService {
 		for (Order order : orderList) {
 			OrderResponse orderResponse = new OrderResponse();
 			orderResponse.setAddress(order.getAddress());
-			orderResponse.setOrderStatus(order.getOrderStatus());
-			orderResponse.setPaymentMethod(order.getPaymentMethod());
-			orderResponse.setPaymentStatus(order.getPaymentStatus());
+			orderResponse.setOrderStatus(order.getOrderStatus() != null ? order.getOrderStatus().name() : null);
+			orderResponse.setPaymentMethod(order.getPaymentMethod() != null ? order.getPaymentMethod().name() : null);
+			orderResponse.setPaymentStatus(order.getPaymentStatus() != null ? order.getPaymentStatus().name() : null);
 			orderResponse.setTotalAmount(order.getTotalAmount());
 			orderResponse.setTransactionId(order.getTransactionId());
 
@@ -258,12 +261,12 @@ public class OrderService {
 		Order order = orderRepository.findById(orderId)
 				.orElseThrow(() -> new ResourceNotFoundException("No order found"));
 
-		order.setOrderStatus(orderStatus);
+		order.setOrderStatus(OrderStatus.valueOf(orderStatus.toUpperCase()));
 		orderRepository.save(order);
 		log.info("Order status is saved in {}", orderStatus);
 
 		OrderResponse orderResponse = new OrderResponse();
-		orderResponse.setOrderStatus(order.getOrderStatus());
+		orderResponse.setOrderStatus(order.getOrderStatus() != null ? order.getOrderStatus().name() : null);
 
 		return orderResponse;
 	}

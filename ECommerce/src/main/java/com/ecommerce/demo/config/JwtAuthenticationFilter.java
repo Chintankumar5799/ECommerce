@@ -46,12 +46,12 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             try {
                 if (jwtUtil.validateToken(token)) {
 
-                	CustomUserPrincipal principal = jwtUtil.getAuthentication(token); // set roles, username,
-                                                                                                 // etc.
-                	UsernamePasswordAuthenticationToken auth = new UsernamePasswordAuthenticationToken(
-                	        principal, null, principal.getAuthorities());
-                	SecurityContextHolder.getContext().setAuthentication(auth);
-                   
+                    CustomUserPrincipal principal = jwtUtil.getAuthentication(token); // set roles, username,
+                                                                                      // etc.
+                    UsernamePasswordAuthenticationToken auth = new UsernamePasswordAuthenticationToken(
+                            principal, null, principal.getAuthorities());
+                    SecurityContextHolder.getContext().setAuthentication(auth);
+
                     // logger.info("token is valid for {}",token.get
                     log.info("Token is valid");
 

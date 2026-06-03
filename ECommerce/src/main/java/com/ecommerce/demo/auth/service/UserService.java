@@ -16,10 +16,10 @@ import org.springframework.stereotype.Service;
 
 import com.ecommerce.demo.auth.controller.AdminController;
 import com.ecommerce.demo.auth.dto.RegisterRequest;
-import com.ecommerce.demo.auth.dto.UserStatus;
 import com.ecommerce.demo.auth.entity.Address;
 import com.ecommerce.demo.auth.entity.Role;
 import com.ecommerce.demo.auth.entity.User;
+import com.ecommerce.demo.auth.entity.UserStatus;
 import com.ecommerce.demo.auth.repository.RoleRepository;
 import com.ecommerce.demo.auth.repository.UserRepository;
 import com.ecommerce.demo.exception.UserAlreadyExistsException;
@@ -134,7 +134,8 @@ public class UserService implements UserDetailsService {
 
 			user = new User();
 			user.setEmail(email);
-			user.setMobileNumber("000000" + (long) (Math.random() * 1000000000L)); // Dummy unique mobile
+			// Generate a unique placeholder for mobile since OAuth doesn't provide it
+			user.setMobileNumber(java.util.UUID.randomUUID().toString().replace("-", "").substring(0, 15));
 			user.setPassword(passwordEncoder.encode("OAUTH_USER_" + java.util.UUID.randomUUID().toString()));
 			user.setEnabled(true);
 			// user.setEmailVerified(true);

@@ -26,10 +26,11 @@ public class CategoryService {
 
 	private static final Logger log = LoggerFactory.getLogger(CategoryService.class);
 
-	public CategoryService(CategoryRepository categoryRepository, SubCategoryRepository subCategoryRepository,CategoryMapper categoryMapper) {
+	public CategoryService(CategoryRepository categoryRepository, SubCategoryRepository subCategoryRepository,
+			CategoryMapper categoryMapper) {
 		this.categoryRepository = categoryRepository;
 		this.subCategoryRepository = subCategoryRepository;
-		this.categoryMapper=categoryMapper;
+		this.categoryMapper = categoryMapper;
 	}
 
 	public CategoryResponse addCategory(String categoryName) {
@@ -86,7 +87,6 @@ public class CategoryService {
 		return subCategoryResponseList;
 	}
 
-	@Deprecated
 	public List<SubCategoryResponse> getAllSubcategory(Long id) {
 		List<SubCategory> subCategoryList = subCategoryRepository.findByCategoryId(id);
 		log.info("Get all sub-category.");

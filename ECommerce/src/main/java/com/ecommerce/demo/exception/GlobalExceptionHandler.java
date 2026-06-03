@@ -82,8 +82,9 @@ public class GlobalExceptionHandler {
     // Catch-all fallback for any other unexpected errors
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ErrorResponse> handleGlobalException(Exception ex) {
+        log.error("Unhandled Exception caught: ", ex); // Log the real error to the server console safely
         ErrorResponse errorResponse = new ErrorResponse(
-                "An unexpected error occurred: " + ex.getMessage(),
+                "An unexpected error occurred. Please try again later.",
                 HttpStatus.INTERNAL_SERVER_ERROR.value(),
                 Instant.now().toEpochMilli());
         return new ResponseEntity<>(errorResponse, HttpStatus.INTERNAL_SERVER_ERROR);

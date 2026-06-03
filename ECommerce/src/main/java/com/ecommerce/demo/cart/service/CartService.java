@@ -13,8 +13,8 @@ import org.springframework.stereotype.Service;
 
 import com.ecommerce.demo.auth.entity.User;
 import com.ecommerce.demo.cart.dto.CartResponse;
-import com.ecommerce.demo.cart.dto.CartStatus;
 import com.ecommerce.demo.cart.entity.Cart;
+import com.ecommerce.demo.cart.entity.CartStatus;
 import com.ecommerce.demo.cart.repository.CartRepository;
 import com.ecommerce.demo.category.entity.ProductVariants;
 import com.ecommerce.demo.config.SecurityConfig;
@@ -28,7 +28,7 @@ public class CartService {
 	private final CartRepository cartRepository;
 	private static final Logger log = LoggerFactory.getLogger(CartService.class);
 
-	CartService(CartRepository cartRepository) {
+	public CartService(CartRepository cartRepository) {
 		this.cartRepository = cartRepository;
 	}
 

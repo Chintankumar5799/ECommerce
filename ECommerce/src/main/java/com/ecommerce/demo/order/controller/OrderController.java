@@ -56,7 +56,7 @@ public class OrderController {
 
 		Pageable pageable = PageRequest.of(page, size, Sort.by("createdOn").descending());
 		List<OrderResponse> orderList = orderService.orderHistory(userId, pageable);
-		return ResponseEntity.status(HttpStatus.ACCEPTED).body(orderList);
+		return ResponseEntity.status(HttpStatus.OK).body(orderList);
 	}
 
 	@GetMapping("/orderHistory/orderId")

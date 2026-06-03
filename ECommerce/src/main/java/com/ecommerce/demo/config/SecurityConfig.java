@@ -37,94 +37,99 @@ import jakarta.servlet.Filter;
 @EnableWebSecurity
 public class SecurityConfig {
 
-    private final UserService userService;
-    private final JwtAuthenticationFilter jwtAuthenticationFilter;
-    private final OAuthSuccessHandler oAuthSuccessHandler;
+        private final UserService userService;
+        private final JwtAuthenticationFilter jwtAuthenticationFilter;
+        private final OAuthSuccessHandler oAuthSuccessHandler;
 
-    public SecurityConfig(UserService userService, JwtAuthenticationFilter jwtAuthenticationFilter,
-            OAuthSuccessHandler oAuthSuccessHandler) {
-        this.userService = userService;
-        this.jwtAuthenticationFilter = jwtAuthenticationFilter;
-        this.oAuthSuccessHandler = oAuthSuccessHandler;
-    }
+        public SecurityConfig(UserService userService, JwtAuthenticationFilter jwtAuthenticationFilter,
+                        OAuthSuccessHandler oAuthSuccessHandler) {
+                this.userService = userService;
+                this.jwtAuthenticationFilter = jwtAuthenticationFilter;
+                this.oAuthSuccessHandler = oAuthSuccessHandler;
+        }
 
-    private static final Logger log = LoggerFactory.getLogger(SecurityConfig.class);
+        private static final Logger log = LoggerFactory.getLogger(SecurityConfig.class);
 
-    @Value("${app.cors.allowed-origins}")
-    private List<String> allowedOrigins;
+        @Value("${app.cors.allowed-origins}")
+        private List<String> allowedOrigins;
 
-    @Bean
-    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
+        @Bean
+        public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
 
-        http
-                .csrf(csrf -> csrf.disable()) // Disable CSRF for REST APIs
-                .cors(Customizer.withDefaults()) // Enable CORS
-                // .sessionManagement(session
-                // ->session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-                .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED))
+                http
+                                .csrf(csrf -> csrf.disable()) // Disable CSRF for REST APIs
+                                .cors(Customizer.withDefaults()) // Enable CORS
+                                // .sessionManagement(session
+                                // ->session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+                                .sessionManagement(session -> session
+                                                .sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED))
 
-                // Handle exceptions: Return 401 for XMLHttpRequests or API calls instead of
-                // redirecting to login
-                .exceptionHandling(exception -> exception
-                        .defaultAuthenticationEntryPointFor(
-                                new HttpStatusEntryPoint(HttpStatus.UNAUTHORIZED),
-                                request -> request.getRequestURI().startsWith("/api/")))
+                                // Handle exceptions: Return 401 for XMLHttpRequests or API calls instead of
+                                // redirecting to login
+                                .exceptionHandling(exception -> exception
+                                                .defaultAuthenticationEntryPointFor(
+                                                                new HttpStatusEntryPoint(HttpStatus.UNAUTHORIZED),
+                                                                request -> request.getRequestURI().startsWith("/api/")))
 
-                .authorizeHttpRequests(auth -> auth
-                        .dispatcherTypeMatchers(jakarta.servlet.DispatcherType.FORWARD,
-                                jakarta.servlet.DispatcherType.ERROR)
-                        .permitAll()
-                        .requestMatchers("/api/auth/login", "/api/auth/register", "/oauth-success","/api/auth/refresh",
-                                "/api/auth/sellerRegister", "/api/AI/**", "/actuator/health")
-                        .permitAll()
-                        // .requestMatchers("/oauth-success").permitAll()
-                        .requestMatchers("/api/user/hi", "/api/category/**", "/api/product/**", "/api/cart/**",
-                                "/api/order/**")
-                        .hasAnyRole(AppConstants.ROLE_BUYER, AppConstants.ROLE_SELLER)
-                        .requestMatchers("/actuator/**")
-                        .hasRole(AppConstants.ROLE_ADMIN)
+                                .authorizeHttpRequests(auth -> auth
+                                                .dispatcherTypeMatchers(jakarta.servlet.DispatcherType.FORWARD,
+                                                                jakarta.servlet.DispatcherType.ERROR)
+                                                .permitAll()
+                                                .requestMatchers("/api/auth/login", "/api/auth/register",
+                                                                "/oauth-success", "/api/auth/refresh",
+                                                                "/api/auth/sellerRegister", "/api/AI/**",
+                                                                "/actuator/health")
+                                                .permitAll()
+                                                // .requestMatchers("/oauth-success").permitAll()
+                                                .requestMatchers("/api/user/hi", "/api/category/**", "/api/product/**",
+                                                                "/api/cart/**",
+                                                                "/api/order/**")
+                                                .hasAnyRole(AppConstants.ROLE_BUYER, AppConstants.ROLE_SELLER)
+                                                .requestMatchers("/actuator/**")
+                                                .hasRole(AppConstants.ROLE_ADMIN)
 
-                        // .requestMatchers("/api/product/newProduct").hasRole(AppConstants.ROLE_SELLER)
-                        // .requestMatchers("/api/seller/").hasRole(AppConstants.ROLE_SELLER)
-                        .anyRequest().authenticated()
+                                                // .requestMatchers("/api/product/newProduct").hasRole(AppConstants.ROLE_SELLER)
+                                                // .requestMatchers("/api/seller/").hasRole(AppConstants.ROLE_SELLER)
+                                                .anyRequest().authenticated()
 
-                )
-                .oauth2Login(oauth2 -> oauth2
-                        .successHandler(oAuthSuccessHandler))
-                .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
-        return http.build();
-    }
+                                )
+                                .oauth2Login(oauth2 -> oauth2
+                                                .successHandler(oAuthSuccessHandler))
+                                .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
+                return http.build();
+        }
 
-    @Bean
-    public JwtUtil jwtUtility() {
-        return new JwtUtil(); // your service with validateToken and getAuthentication
-    }
+        // @Bean
+        // public JwtUtil jwtUtility() {
+        // return new JwtUtil(); // your service with validateToken and
+        // getAuthentication
+        // }
 
-    @Bean
-    public SessionRegistry sessionRegistry() {
-        return new SessionRegistryImpl();
-    }
+        @Bean
+        public SessionRegistry sessionRegistry() {
+                return new SessionRegistryImpl();
+        }
 
-    // Not required in latest Spring Security but if we call it then need to define
-    @Bean
-    public AuthenticationManager authenticationManager(AuthenticationConfiguration configuration) throws Exception {
-        return configuration.getAuthenticationManager();
-    }
+        // Not required in latest Spring Security but if we call it then need to define
+        @Bean
+        public AuthenticationManager authenticationManager(AuthenticationConfiguration configuration) throws Exception {
+                return configuration.getAuthenticationManager();
+        }
 
-    @Bean
-    public org.springframework.web.cors.CorsConfigurationSource corsConfigurationSource() {
-        org.springframework.web.cors.CorsConfiguration configuration = new org.springframework.web.cors.CorsConfiguration();
-        // Allow likely frontend origins (localhost:3000 for React, etc.)
-        // Configured from application.properties to avoid wide-open CORS
-        configuration.setAllowedOriginPatterns(allowedOrigins);
-        configuration.setAllowedMethods(java.util.List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
-        configuration.setAllowedHeaders(java.util.List.of("Authorization", "Content-Type"));
-        configuration.setAllowCredentials(true);
+        @Bean
+        public org.springframework.web.cors.CorsConfigurationSource corsConfigurationSource() {
+                org.springframework.web.cors.CorsConfiguration configuration = new org.springframework.web.cors.CorsConfiguration();
+                // Allow likely frontend origins (localhost:3000 for React, etc.)
+                // Configured from application.properties to avoid wide-open CORS
+                configuration.setAllowedOriginPatterns(allowedOrigins);
+                configuration.setAllowedMethods(java.util.List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
+                configuration.setAllowedHeaders(java.util.List.of("Authorization", "Content-Type"));
+                configuration.setAllowCredentials(true);
 
-        org.springframework.web.cors.UrlBasedCorsConfigurationSource source = new org.springframework.web.cors.UrlBasedCorsConfigurationSource();
-        source.registerCorsConfiguration("/**", configuration);
-        return source;
-    }
+                org.springframework.web.cors.UrlBasedCorsConfigurationSource source = new org.springframework.web.cors.UrlBasedCorsConfigurationSource();
+                source.registerCorsConfiguration("/**", configuration);
+                return source;
+        }
 
 }
 

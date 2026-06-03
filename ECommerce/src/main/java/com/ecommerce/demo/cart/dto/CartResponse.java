@@ -1,5 +1,7 @@
 package com.ecommerce.demo.cart.dto;
 
+import com.ecommerce.demo.cart.entity.CartStatus;
+
 public class CartResponse {
 
 	private Long id;

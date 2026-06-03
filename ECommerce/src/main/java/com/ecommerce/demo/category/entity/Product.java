@@ -24,57 +24,53 @@ import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 
 @Entity
-@Table(name="product")
-public class Product extends BaseEntity{
-	
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long id;
+@Table(name = "product")
+public class Product extends BaseEntity {
 
-    @Column(nullable=false)
-    private String productName;
+	@Id
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	private long id;
 
-	@Column(name="deleted",nullable = false)
-    private Boolean isDeleted=false;
+	@Column(nullable = false)
+	private String productName;
 
+	@Column(name = "deleted", nullable = false)
+	private Boolean isDeleted = false;
 
-    @ManyToOne
-    @JsonIgnore
-    @JoinColumn(name = "sub_category_id")
-    private SubCategory subCategory;
+	@ManyToOne
+	@JsonIgnore
+	@JoinColumn(name = "sub_category_id")
+	private SubCategory subCategory;
 
-    @JsonIgnore
-    @OneToMany(mappedBy = "product", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<Images> images;
+	@JsonIgnore
+	@OneToMany(mappedBy = "product", cascade = CascadeType.ALL, orphanRemoval = true)
+	private List<Images> images;
 
-    @JsonIgnore
-    @OneToMany(mappedBy = "product", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<ProductVariants> productVariants;
+	@JsonIgnore
+	@OneToMany(mappedBy = "product", cascade = CascadeType.ALL, orphanRemoval = true)
+	private List<ProductVariants> productVariants;
 
-//    @Lob
-//    @Column(columnDefinition = "json")
-//    private List<String> specification;
-//    Both above and below approach works but below approach not need to serialize and de-Serialize manually
-//    but only for Dbl like postgres where jsonb datatype is there.
-    
-	 @JdbcTypeCode(SqlTypes.JSON)
-	 private JsonNode jsonAttributes;
-	    
-	    
-	 @ManyToOne
-	 @JoinColumn(name = "seller_id", nullable = false)
-	 @JsonIgnore
-	 private User seller;
-	    
-	 
-	 private Long price;
-	 private Long offerPrice;
-	 private float discount;
-//	    @JsonIgnore
-//	    @OneToMany
-//	    private ProductVariants productVariants;
-	    
-	    
+	// @Lob
+	// @Column(columnDefinition = "json")
+	// private List<String> specification;
+	// Both above and below approach works but below approach not need to serialize
+	// and de-Serialize manually
+	// but only for Dbl like postgres where jsonb datatype is there.
+
+	@JdbcTypeCode(SqlTypes.JSON)
+	private JsonNode jsonAttributes;
+
+	@ManyToOne
+	@JoinColumn(name = "seller_id", nullable = false)
+	@JsonIgnore
+	private User seller;
+
+	private Long price;
+	private Long offerPrice;
+	private float discount;
+	// @JsonIgnore
+	// @OneToMany
+	// private ProductVariants productVariants;
 
 	public long getId() {
 		return id;
@@ -163,7 +159,27 @@ public class Product extends BaseEntity{
 	public void setProductVariants(List<ProductVariants> productVariants) {
 		this.productVariants = productVariants;
 	}
-    
-	
-    
+
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + (int) (id ^ (id >>> 32));
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		Product other = (Product) obj;
+		if (id != other.id)
+			return false;
+		return true;
+	}
+
 }

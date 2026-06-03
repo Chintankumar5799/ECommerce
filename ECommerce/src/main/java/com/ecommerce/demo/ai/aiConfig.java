@@ -56,7 +56,7 @@ public class aiConfig {
         // ChatClient (with memory + logging + safeguard)
         // -------------------------------------------------------
         @Bean
-        public ChatClient chatClient(ChatClient.Builder builder, ChatMemory chatMemory) {
+        public ChatClient chatClient1(ChatClient.Builder builder, ChatMemory chatMemory) {
 
                 // For make LLM stateful from stateless to remember old prompt
                 MessageChatMemoryAdvisor messageChatMemoryAdvisor = MessageChatMemoryAdvisor.builder(chatMemory)
