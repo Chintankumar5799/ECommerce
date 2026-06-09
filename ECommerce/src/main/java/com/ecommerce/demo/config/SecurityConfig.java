@@ -57,7 +57,17 @@ public class SecurityConfig {
         public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
 
                 http
-                                .csrf(csrf -> csrf.disable()) // Disable CSRF for REST APIs
+                                .csrf(csrf -> csrf
+                                                .csrfTokenRepository(
+                                                                org.springframework.security.web.csrf.CookieCsrfTokenRepository
+                                                                                .withHttpOnlyFalse())
+                                                .ignoringRequestMatchers("/api/**", "/swagger-ui/**", "/v3/api-docs/**") // Stateless
+                                                                                                                         // JWT
+                                                                                                                         // APIs
+                                                                                                                         // don't
+                                                                                                                         // need
+                                                                                                                         // CSRF
+                                )
                                 .cors(Customizer.withDefaults()) // Enable CORS
                                 // .sessionManagement(session
                                 // ->session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
@@ -75,10 +85,13 @@ public class SecurityConfig {
                                                 .dispatcherTypeMatchers(jakarta.servlet.DispatcherType.FORWARD,
                                                                 jakarta.servlet.DispatcherType.ERROR)
                                                 .permitAll()
-                                                .requestMatchers("/api/auth/login", "/api/auth/register",
-                                                                "/oauth-success", "/api/auth/refresh",
-                                                                "/api/auth/sellerRegister", "/api/AI/**",
-                                                                "/actuator/health")
+                                                .requestMatchers("/api/auth/v1/login", "/api/auth/v1/register",
+                                                                "/api/auth/verify-email",
+                                                                "/api/auth/v1/oauth-success",
+                                                                "/api/auth/v2/oauth-success",
+                                                                "/api/auth/v1/refresh", "/api/auth/v1/sellerRegister",
+                                                                "/api/AI/**", "/actuator/health",
+                                                                "/v3/api-docs/**", "/swagger-ui/**", "/swagger-ui.html")
                                                 .permitAll()
                                                 // .requestMatchers("/oauth-success").permitAll()
                                                 .requestMatchers("/api/user/hi", "/api/category/**", "/api/product/**",

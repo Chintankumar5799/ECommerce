@@ -1,11 +1,15 @@
 package com.ecommerce.demo.auth.service;
 
+import java.time.LocalDateTime;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.UUID;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.Bean;
+import org.springframework.mail.MailSender;
+import org.springframework.mail.SimpleMailMessage;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -21,7 +25,9 @@ import com.ecommerce.demo.auth.entity.Role;
 import com.ecommerce.demo.auth.entity.User;
 import com.ecommerce.demo.auth.entity.UserStatus;
 import com.ecommerce.demo.auth.repository.RoleRepository;
+import com.ecommerce.demo.auth.repository.TokenRepository;
 import com.ecommerce.demo.auth.repository.UserRepository;
+import com.ecommerce.demo.config.VerificationToken;
 import com.ecommerce.demo.exception.UserAlreadyExistsException;
 
 //import org.springframework.security.core.userdetails.User;
@@ -34,13 +40,18 @@ public class UserService implements UserDetailsService {
 	private final UserRepository userRepository;
 	private final PasswordEncoder passwordEncoder;
 	private final RoleRepository roleRepository;
+	private final TokenRepository tokenRepository;
+	private final MailSender mailSender;
 
 	private static final Logger log = LoggerFactory.getLogger(UserService.class);
 
-	public UserService(UserRepository userRepository, RoleRepository roleRepository, PasswordEncoder passwordEncoder) {
+	public UserService(UserRepository userRepository, RoleRepository roleRepository, PasswordEncoder passwordEncoder,
+			TokenRepository tokenRepository, MailSender mailSender) {
 		this.userRepository = userRepository;
 		this.passwordEncoder = passwordEncoder;
 		this.roleRepository = roleRepository;
+		this.tokenRepository = tokenRepository;
+		this.mailSender = mailSender;
 	}
 
 	/**
@@ -70,7 +81,7 @@ public class UserService implements UserDetailsService {
 			user.setStatus(UserStatus.APPROVED); // Buyers can shop instantly
 		}
 
-		// user.setEmailVerified(false);
+		user.setEmailVerified(false);
 		// user.setPhoneVerified(false);
 		user.getRoles().add(customerRole);
 
@@ -82,6 +93,25 @@ public class UserService implements UserDetailsService {
 		}
 		user.setAddress(addressList);
 		userRepository.save(user);
+
+		// Email Verification code
+		String token = UUID.randomUUID().toString();
+
+		VerificationToken vToken = new VerificationToken();
+		vToken.setToken(token);
+		vToken.setUser(user);
+
+		vToken.setExpiryDate(LocalDateTime.now().plusMinutes(15));
+		tokenRepository.save(vToken);
+
+		SimpleMailMessage mailMessage = new SimpleMailMessage();
+		mailMessage.setTo(user.getEmail());
+		mailMessage.setSubject("Complete Registration!");
+		mailMessage.setText("To confirm your account, please clieck here : " +
+				"http://localhost:8081/api/auth/verify-email?token=" + token);
+
+		mailSender.send(mailMessage);
+
 	}
 
 	@org.springframework.transaction.annotation.Transactional

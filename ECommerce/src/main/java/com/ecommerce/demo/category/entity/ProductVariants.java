@@ -1,6 +1,8 @@
 package com.ecommerce.demo.category.entity;
 
 import org.hibernate.annotations.JdbcTypeCode;
+import org.hibernate.annotations.SQLDelete;
+import org.hibernate.annotations.SQLRestriction;
 import org.hibernate.type.SqlTypes;
 
 import com.ecommerce.demo.auth.entity.BaseEntity;
@@ -18,6 +20,8 @@ import jakarta.persistence.Version;
 
 @Entity
 @Table(name = "product_variant")
+@SQLDelete(sql = "UPDATE product_variants SET is_deleted=true WHERE id=?")
+@SQLRestriction("is_deleted=false")
 public class ProductVariants extends BaseEntity {
 
 	@Id

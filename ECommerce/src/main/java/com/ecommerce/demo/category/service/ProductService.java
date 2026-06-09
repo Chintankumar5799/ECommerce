@@ -9,6 +9,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
+import org.springframework.dao.CannotAcquireLockException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
@@ -19,6 +20,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.server.ResponseStatusException;
 import org.springframework.http.HttpStatus;
+import org.springframework.retry.annotation.Backoff;
+import org.springframework.retry.annotation.Retryable;
 
 import com.ecommerce.demo.category.entity.Category;
 import com.ecommerce.demo.category.entity.Images;
@@ -135,6 +138,10 @@ public class ProductService {
 	}
 
 	@Transactional
+	@Retryable(retryFor = { CannotAcquireLockException.class }, // Only retry if the DB is locked/deadlocked
+			maxAttempts = 3, // Try 3 times before giving up
+			backoff = @Backoff(delay = 500) // Wait 500ms between attempts
+	)
 	public PurchaseResponse buyProduct(Long variantId, Long quantity) {
 		try {
 			if (variantId == null || quantity == null) {

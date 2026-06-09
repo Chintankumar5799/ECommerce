@@ -2,6 +2,9 @@ package com.ecommerce.demo.category.entity;
 
 import java.util.List;
 
+import org.hibernate.annotations.SQLDelete;
+import org.hibernate.annotations.SQLRestriction;
+
 import com.ecommerce.demo.auth.entity.BaseEntity;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.databind.JsonNode;
@@ -19,81 +22,78 @@ import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 
 @Entity
-@Table(name="subcategory")
-public class SubCategory extends BaseEntity{
-	
-	  	@Id
-	    @GeneratedValue(strategy = GenerationType.IDENTITY)
-	    private long id;
+@Table(name = "subcategory")
+@SQLDelete(sql = "UPDATE sub_category SET is_deleted=true WHERE id=?")
+@SQLRestriction("is_deleted=false")
+public class SubCategory extends BaseEntity {
 
-	  	@Column(nullable=false)
-	    private String subCategoryName;
+	@Id
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	private long id;
 
-		@Column(name="deleted",nullable = false)
-	    private Boolean isDeleted=false;
+	@Column(nullable = false)
+	private String subCategoryName;
 
-	    @ManyToOne
-	    @JsonIgnore
-	    @JoinColumn(name = "category_id")
-	    private Category category;
-	    
-	    
+	@Column(name = "deleted", nullable = false)
+	private Boolean isDeleted = false;
 
-	    @OneToMany(mappedBy = "subCategory", cascade = CascadeType.ALL, orphanRemoval = true)
-	    private List<Product> products;  // Corrected to List<Product> (One-to-many relationship)
+	@ManyToOne
+	@JsonIgnore
+	@JoinColumn(name = "category_id")
+	private Category category;
 
-	    @Column
-	    private String specificationName;
+	@OneToMany(mappedBy = "subCategory", cascade = CascadeType.ALL, orphanRemoval = true)
+	private List<Product> products; // Corrected to List<Product> (One-to-many relationship)
 
-		public long getId() {
-			return id;
-		}
+	@Column
+	private String specificationName;
 
-		public void setId(long id) {
-			this.id = id;
-		}
+	public long getId() {
+		return id;
+	}
 
-		public String getSubCategoryName() {
-			return subCategoryName;
-		}
+	public void setId(long id) {
+		this.id = id;
+	}
 
-		public void setSubCategoryName(String subCategoryName) {
-			this.subCategoryName = subCategoryName;
-		}
+	public String getSubCategoryName() {
+		return subCategoryName;
+	}
 
-		public Boolean getIsDeleted() {
-			return isDeleted;
-		}
+	public void setSubCategoryName(String subCategoryName) {
+		this.subCategoryName = subCategoryName;
+	}
 
-		public void setIsDeleted(Boolean isDeleted) {
-			this.isDeleted = isDeleted;
-		}
+	public Boolean getIsDeleted() {
+		return isDeleted;
+	}
 
-		public Category getCategory() {
-			return category;
-		}
+	public void setIsDeleted(Boolean isDeleted) {
+		this.isDeleted = isDeleted;
+	}
 
-		public void setCategory(Category category) {
-			this.category = category;
-		}
+	public Category getCategory() {
+		return category;
+	}
 
-		public List<Product> getProducts() {
-			return products;
-		}
+	public void setCategory(Category category) {
+		this.category = category;
+	}
 
-		public void setProducts(List<Product> products) {
-			this.products = products;
-		}
+	public List<Product> getProducts() {
+		return products;
+	}
 
-		public String getSpecificationName() {
-			return specificationName;
-		}
+	public void setProducts(List<Product> products) {
+		this.products = products;
+	}
 
-		public void setSpecificationName(String specificationName) {
-			this.specificationName = specificationName;
-		}
-	    
-	    
-	    
-	
+	public String getSpecificationName() {
+		return specificationName;
+	}
+
+	public void setSpecificationName(String specificationName) {
+		this.specificationName = specificationName;
+	}
+
 }

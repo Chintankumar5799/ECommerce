@@ -18,41 +18,23 @@ public class AIController {
 
     private final AIService service;
 
-    private final static Logger log=LoggerFactory.getLogger(AIController.class);
-    
+    private final static Logger log = LoggerFactory.getLogger(AIController.class);
+
     public AIController(AIService service) {
         this.service = service;
     }
 
-    @PostMapping("/call")
-    public ResponseEntity<String> getResponse(@RequestBody String query, @RequestHeader("ConversationId") String conversationId) {
-       log.info("Chat call with "+query+" "+conversationId);
-    	return ResponseEntity.ok(service.getResponseFromAssistant(query,conversationId));
+    @PostMapping("/v1/call")
+    public ResponseEntity<String> getResponse(@RequestBody String query,
+            @RequestHeader("ConversationId") String conversationId) {
+        log.info("Chat call with " + query + " " + conversationId);
+        return ResponseEntity.ok(service.getResponseFromAssistant(query, conversationId));
     }
-    
-    
-    @PostMapping("/stream")
-    public Flux<String> streamResponse(@RequestBody String query, @RequestHeader("ConversationId") String conversationId) {
-    	 log.info("Chat stream with "+query+" "+conversationId);
-    	return this.service.streamResponseFromAssistant(query, conversationId);
+
+    @PostMapping("/v1/stream")
+    public Flux<String> streamResponse(@RequestBody String query,
+            @RequestHeader("ConversationId") String conversationId) {
+        log.info("Chat stream with " + query + " " + conversationId);
+        return this.service.streamResponseFromAssistant(query, conversationId);
     }
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

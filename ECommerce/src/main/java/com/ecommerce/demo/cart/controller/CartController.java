@@ -35,7 +35,7 @@ public class CartController {
 		this.cartService = cartService;
 	}
 
-	@PostMapping("/addToCart")
+	@PostMapping("/v1/addToCart")
 	public ResponseEntity<CartResponse> addToCart(@AuthenticationPrincipal CustomUserPrincipal principal,
 			@RequestParam Long variantId,
 			@RequestParam int quantity) {
@@ -46,7 +46,7 @@ public class CartController {
 		return ResponseEntity.status(HttpStatus.ACCEPTED).body(cartResponse);
 	}
 
-	@PostMapping("/wishlist")
+	@PostMapping("/v1/wishlist")
 	public ResponseEntity<CartResponse> addToWishlist(@AuthenticationPrincipal CustomUserPrincipal principal,
 			@RequestParam Long variantId,
 			@RequestParam int quantity) {
@@ -57,7 +57,7 @@ public class CartController {
 		return ResponseEntity.status(HttpStatus.ACCEPTED).body(cartResponse);
 	}
 
-	@PutMapping("/changeStatus")
+	@PutMapping("/v1/changeStatus")
 	public ResponseEntity<CartResponse> changeStatus(@AuthenticationPrincipal CustomUserPrincipal principal,
 			@RequestParam Long variantId) {
 
@@ -67,7 +67,7 @@ public class CartController {
 		return ResponseEntity.status(HttpStatus.ACCEPTED).body(cartResponse);
 	}
 
-	@GetMapping("/getCart")
+	@GetMapping("/v1/getCart")
 	public ResponseEntity<Page<CartResponse>> getCartDetails(@AuthenticationPrincipal CustomUserPrincipal principal,
 			@RequestParam int page, @RequestParam int size) {
 		Long userId = principal.getUserId();
@@ -76,7 +76,7 @@ public class CartController {
 		return ResponseEntity.status(HttpStatus.ACCEPTED).body(cartResponse);
 	}
 
-	@DeleteMapping("/remove")
+	@DeleteMapping("/v1/remove")
 	public ResponseEntity<String> removeFromCart(@AuthenticationPrincipal CustomUserPrincipal principal,
 			@RequestParam Long variantId) {
 

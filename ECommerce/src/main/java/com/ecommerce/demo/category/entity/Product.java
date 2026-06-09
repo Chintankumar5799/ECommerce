@@ -4,6 +4,8 @@ import java.io.Serializable;
 import java.util.List;
 
 import org.hibernate.annotations.JdbcTypeCode;
+import org.hibernate.annotations.SQLDelete;
+import org.hibernate.annotations.SQLRestriction;
 import org.hibernate.type.SqlTypes;
 
 import com.ecommerce.demo.auth.entity.BaseEntity;
@@ -25,6 +27,8 @@ import jakarta.persistence.Table;
 
 @Entity
 @Table(name = "product")
+@SQLDelete(sql = "UPDATE product SET is_deleted=true WHERE id=?")
+@SQLRestriction("is_deleted=false")
 public class Product extends BaseEntity {
 
 	@Id

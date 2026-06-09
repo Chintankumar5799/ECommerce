@@ -37,7 +37,7 @@ public class SubCategoryController {
 		return "Hello askjnas";
 	}
 
-	@PostMapping("/newSubCategory")
+	@PostMapping("/v1/newSubCategory")
 	public ResponseEntity<SubCategoryResponse> addSubCategory(
 			@Valid @RequestBody SubCategoryRequest subCategoryRequest) {
 		SubCategoryResponse subCategory = subCategoryService.addSubCategory(subCategoryRequest);

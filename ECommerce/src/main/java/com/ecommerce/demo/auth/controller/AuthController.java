@@ -1,5 +1,6 @@
 package com.ecommerce.demo.auth.controller;
 
+import java.time.LocalDateTime;
 import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -20,11 +21,15 @@ import com.ecommerce.demo.auth.dto.AuthenticationResponse;
 import com.ecommerce.demo.auth.dto.LoginRequest;
 import com.ecommerce.demo.auth.dto.RegisterRequest;
 import com.ecommerce.demo.auth.entity.User;
+import com.ecommerce.demo.auth.repository.TokenRepository;
 import com.ecommerce.demo.auth.repository.UserRepository;
 import com.ecommerce.demo.auth.service.UserService;
 import com.ecommerce.demo.config.JwtUtil;
 import com.ecommerce.demo.config.SecurityConfig;
+import com.ecommerce.demo.config.VerificationToken;
 
+import io.github.resilience4j.ratelimiter.RequestNotPermitted;
+import io.github.resilience4j.ratelimiter.annotation.RateLimiter;
 import jakarta.validation.Valid;
 
 @RestController
@@ -41,24 +46,42 @@ public class AuthController {
 
 	private final SecurityConfig securityConfig;
 
+	private final TokenRepository tokenRepository;
+
 	private static final Logger log = LoggerFactory.getLogger(AuthController.class);
 
 	public AuthController(AuthenticationManager authenticationManager, UserService userService,
-			UserRepository userRepository, JwtUtil jwtUtil, SecurityConfig securityConfig) {
+			UserRepository userRepository, JwtUtil jwtUtil, SecurityConfig securityConfig,
+			TokenRepository tokenRepository) {
 		this.authenticationManager = authenticationManager;
 		this.userService = userService;
 		this.userRepository = userRepository;
 		this.jwtUtil = jwtUtil;
 		this.securityConfig = securityConfig;
+		this.tokenRepository = tokenRepository;
 	}
 
-	@PostMapping(value = "/register", consumes = "application/json", produces = "application/json")
-	public String registerUser(@Valid @RequestBody RegisterRequest registerRequest) {
+	@PostMapping(value = "/v1/register", consumes = "application/json", produces = "application/json")
+	@RateLimiter(name = "authRateLimiter", fallbackMethod = "registerFallback")
+	public ResponseEntity<?> registerUser(@Valid @RequestBody RegisterRequest registerRequest) {
 		userService.register(registerRequest, "BUYER");
-		return "User register Successfully";
+		return ResponseEntity.ok("User register Successfully");
 	}
 
-	@PostMapping("/login")
+	// Register and Login fallback method
+
+	public ResponseEntity<?> registerFallback(RegisterRequest request, RequestNotPermitted ex) {
+		log.warn("Rate limit exceeded for register request from IP: {}", request.getEmail());
+		return ResponseEntity.status(429).body("Too Many Requests. Please try again later.");
+	}
+
+	public ResponseEntity<?> loginFallback(LoginRequest request, RequestNotPermitted ex) {
+		log.warn("Rate limit exceeded for login request from IP: {}", request.getEmail());
+		return ResponseEntity.status(429).body("Too Many Requests. Please try again later.");
+	}
+
+	@PostMapping("/v1/login")
+	@RateLimiter(name = "authRateLimiter", fallbackMethod = "loginFallback")
 	public ResponseEntity<?> login(@Valid @RequestBody LoginRequest request) {
 		try {
 
@@ -94,7 +117,7 @@ public class AuthController {
 		}
 	}
 
-	@PostMapping("/refresh")
+	@PostMapping("/v1/refresh")
 	public ResponseEntity<?> refresh(@RequestBody Map<String, String> request) {
 		String refreshToken = request.get("refreshToken");
 
@@ -122,13 +145,34 @@ public class AuthController {
 	// I will now clean up the commented out code in AuthController to make it look
 	// professional as requested.
 
-	@GetMapping("/oauth-success")
+	@GetMapping("/v1/oauth-success")
 	public ResponseEntity<?> oauthSuccess(@RequestParam String accessToken,
 			@RequestParam String refreshToken) {
 		AuthenticationResponse response = new AuthenticationResponse();
 		response.setAccessToken(accessToken);
 		response.setRefreshToken(refreshToken);
 		return ResponseEntity.ok(response);
+	}
+
+	@GetMapping("/verify-email")
+	public ResponseEntity<?> verifyEmail(@RequestParam("token") String token) {
+		VerificationToken verificationToken = tokenRepository.findByToken(token);
+
+		if (verificationToken == null) {
+			return ResponseEntity.badRequest().body("Invalid verification token.");
+
+		}
+
+		if (verificationToken.getExpiryDate().isBefore(LocalDateTime.now())) {
+			return ResponseEntity.badRequest().body("Token has expired.");
+		}
+		// Token is valid! Update the user.
+		User user = verificationToken.getUser();
+		user.setEmailVerified(true);
+		userRepository.save(user);
+		// Optional: Delete the token so it can't be reused
+		tokenRepository.delete(verificationToken);
+		return ResponseEntity.ok("Email verified successfully! You can now log in.");
 	}
 
 }

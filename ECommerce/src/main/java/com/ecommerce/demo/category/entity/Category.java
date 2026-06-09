@@ -2,6 +2,9 @@ package com.ecommerce.demo.category.entity;
 
 import java.util.List;
 
+import org.hibernate.annotations.SQLDelete;
+import org.hibernate.annotations.SQLRestriction;
+
 import com.ecommerce.demo.auth.entity.BaseEntity;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.databind.JsonNode;
@@ -19,55 +22,55 @@ import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 
 @Entity
-@Table(name="category")
+@Table(name = "category")
+@SQLDelete(sql = "UPDATE category SET is_deleted=true where id=?")
+@SQLRestriction("is_deleted=false")
 public class Category extends BaseEntity {
-	
-	    @Id
-	    @GeneratedValue(strategy = GenerationType.IDENTITY)
-	    private long id;
 
-	    @Column(nullable=false)
-	    private String categoryName;
+	@Id
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	private long id;
 
-	    @OneToMany(mappedBy = "category", cascade = CascadeType.ALL, orphanRemoval = true)
-	    @JsonIgnore
-	    private List<SubCategory> subCategories;
+	@Column(nullable = false)
+	private String categoryName;
 
-		@Column(name="deleted",nullable = false)
-	    private Boolean isDeleted=false;
+	@OneToMany(mappedBy = "category", cascade = CascadeType.ALL, orphanRemoval = true)
+	@JsonIgnore
+	private List<SubCategory> subCategories;
 
-		public long getId() {
-			return id;
-		}
+	@Column(name = "deleted", nullable = false)
+	private Boolean isDeleted = false;
 
-		public void setId(long id) {
-			this.id = id;
-		}
+	public long getId() {
+		return id;
+	}
 
-		public String getCategoryName() {
-			return categoryName;
-		}
+	public void setId(long id) {
+		this.id = id;
+	}
 
-		public void setCategoryName(String categoryName) {
-			this.categoryName = categoryName;
-		}
+	public String getCategoryName() {
+		return categoryName;
+	}
 
-		public List<SubCategory> getSubCategories() {
-			return subCategories;
-		}
+	public void setCategoryName(String categoryName) {
+		this.categoryName = categoryName;
+	}
 
-		public void setSubCategories(List<SubCategory> subCategories) {
-			this.subCategories = subCategories;
-		}
+	public List<SubCategory> getSubCategories() {
+		return subCategories;
+	}
 
-		public Boolean getIsDeleted() {
-			return isDeleted;
-		}
+	public void setSubCategories(List<SubCategory> subCategories) {
+		this.subCategories = subCategories;
+	}
 
-		public void setIsDeleted(Boolean isDeleted) {
-			this.isDeleted = isDeleted;
-		}
+	public Boolean getIsDeleted() {
+		return isDeleted;
+	}
 
-		
-	    
+	public void setIsDeleted(Boolean isDeleted) {
+		this.isDeleted = isDeleted;
+	}
+
 }

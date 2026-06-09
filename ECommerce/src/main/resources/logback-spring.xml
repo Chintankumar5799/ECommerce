@@ -24,10 +24,19 @@
         </encoder>
     </appender>
 
+    <!-- Keep printing to the console for local development -->
+    <include resource="org/springframework/boot/logging/logback/base.xml"/>
+    <!-- Send everything to Centralized Logging Server as JSON -->
+    <!-- <appender name="LOGSTASH" class="net.logstash.logback.appender.LogstashTcpSocketAppender">
+        <destination>your-elk-server.com:5000</destination>
+        <encoder class="net.logstash.logback.encoder.LogstashEncoder" />
+    </appender> -->
+
     <!-- 4. Root Logger & Levels -->
     <root level="INFO">
         <appender-ref ref="CONSOLE" />
         <appender-ref ref="FILE" />
+        <appender-ref ref="LOGSTASH" />
     </root>
 
 </configuration>

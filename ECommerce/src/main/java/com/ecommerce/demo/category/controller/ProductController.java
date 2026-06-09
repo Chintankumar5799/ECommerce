@@ -52,7 +52,7 @@ public class ProductController {
 	}
 
 	@PreAuthorize("hasRole('SELLER')")
-	@PostMapping(value = "/newProduct", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+	@PostMapping(value = "/v1/newProduct", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
 	public ResponseEntity<ProductResponse> addProduct(
 			@AuthenticationPrincipal CustomUserPrincipal principal,
 			@RequestPart("productRequest") String requestStr,
@@ -94,7 +94,7 @@ public class ProductController {
 	// }
 	//
 	// BUYER
-	@GetMapping("/getProductBySubCategory")
+	@GetMapping("/v1/getProductBySubCategory")
 	public ResponseEntity<Page<ProductResponse>> getProductBySubCategory(@RequestParam Long subCategoryId,
 			@RequestParam(defaultValue = "0") int page,
 			@RequestParam(defaultValue = "10") int size) {
@@ -104,14 +104,14 @@ public class ProductController {
 
 	}
 
-	@GetMapping("/allProducts")
+	@GetMapping("/v1/allProducts")
 	public ResponseEntity<List<ProductResponse>> getAllProducts() {
 		log.info("Get list of all products");
 		return ResponseEntity.status(HttpStatus.OK).body(productService.getAllProducts());
 	}
 
 	// BUYER
-	@GetMapping("/getProductVariant")
+	@GetMapping("/v1/getProductVariant")
 	public ResponseEntity<List<ProductResponse>> getSubcategory(@RequestParam Long productId) {
 		log.info("Get Product variant by product Id");
 		List<ProductResponse> productResponse = productService.getProductsVariantByProductId(productId);
@@ -119,14 +119,14 @@ public class ProductController {
 	}
 
 	// BUYER
-	@PostMapping("/buyProduct")
+	@PostMapping("/v1/buyProduct")
 	public ResponseEntity<PurchaseResponse> buyProduct(@RequestParam Long variantId, @RequestParam Long quantity) {
 		log.info("Buy product with variantId {} With quantity {}", variantId, quantity);
 		PurchaseResponse purchaseResponse = productService.buyProduct(variantId, quantity);
 		return ResponseEntity.status(HttpStatus.ACCEPTED).body(purchaseResponse);
 	}
 
-	@PostMapping("/filter")
+	@PostMapping("/v1/filter")
 	public ResponseEntity<Page<ProductResponse>> getFilteredProducts(@RequestParam Long categoryId,
 			@RequestParam Long subCategoryId, @RequestParam Long minPrice, @RequestParam Long maxPrice,
 			@RequestParam int page, @RequestParam int size, @RequestParam String sortBy,
@@ -147,7 +147,7 @@ public class ProductController {
 
 	}
 
-	@DeleteMapping
+	@DeleteMapping("/v1/removeProduct")
 	public ResponseEntity<String> removeProduct(@RequestParam Long productId) {
 
 		String remove = productService.removeProducts(productId);

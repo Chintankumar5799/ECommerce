@@ -39,7 +39,7 @@ public class CategoryController {
 
 	// May be for admin only
 	@PreAuthorize("hasRole('SELLER')")
-	@PostMapping("/newCategory")
+	@PostMapping("/v1/newCategory")
 	public ResponseEntity<CategoryResponse> addCategory(@RequestParam String categoryName) {
 		log.info("New Category with name " + categoryName + " is added.");
 		CategoryResponse categoryResponse = categoryService.addCategory(categoryName);
@@ -47,7 +47,7 @@ public class CategoryController {
 	}
 
 	// For admin and seller
-	@GetMapping("/getCategory")
+	@GetMapping("/v1/getCategory")
 	public ResponseEntity<List<CategoryResponse>> getAllCategory() {
 		log.info("Get all Category");
 		return ResponseEntity.status(HttpStatus.ACCEPTED).body(categoryService.getAllCategory());

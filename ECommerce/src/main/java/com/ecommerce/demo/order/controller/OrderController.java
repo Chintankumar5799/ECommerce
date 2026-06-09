@@ -36,7 +36,7 @@ public class OrderController {
 
 	private final static Logger log = LoggerFactory.getLogger(OrderController.class);
 
-	@PostMapping("/confirm")
+	@PostMapping("/v1/confirm")
 	public ResponseEntity<?> confirmFinalOrder(@AuthenticationPrincipal CustomUserPrincipal principal,
 			@RequestParam String paymentIntentId) {
 
@@ -46,7 +46,7 @@ public class OrderController {
 		return ResponseEntity.ok("Order Officially Confirmed!");
 	}
 
-	@GetMapping("/orderHistory")
+	@GetMapping("/v1/orderHistory")
 	public ResponseEntity<List<OrderResponse>> orderHistory(@AuthenticationPrincipal CustomUserPrincipal principal,
 			@RequestParam(defaultValue = "0") int page,
 			@RequestParam(defaultValue = "10") int size) {
@@ -59,7 +59,7 @@ public class OrderController {
 		return ResponseEntity.status(HttpStatus.OK).body(orderList);
 	}
 
-	@GetMapping("/orderHistory/orderId")
+	@GetMapping("/v1/orderHistory/orderId")
 	public ResponseEntity<List<OrderItemResponse>> orderHistoryByOrderId(
 			@AuthenticationPrincipal CustomUserPrincipal principal,
 			@RequestParam Long orderId) {
@@ -70,7 +70,7 @@ public class OrderController {
 		return ResponseEntity.status(HttpStatus.ACCEPTED).body(orderList);
 	}
 
-	@PutMapping("/orderStatus")
+	@PutMapping("/v1/orderStatus")
 	public ResponseEntity<String> orderStatus(@RequestParam Long orderId, @RequestParam String orderStatus) {
 		log.info("Change order status for orderId {} ", orderId);
 		OrderResponse updatedStatus = orderService.orderStatus(orderId, orderStatus);

@@ -26,7 +26,7 @@ public class AdminController {
 	@Autowired
 	private UserService userService;
 
-	@PostMapping(value = "/sellerRegister", consumes = "application/json", produces = "application/json")
+	@PostMapping(value = "/v1/sellerRegister", consumes = "application/json", produces = "application/json")
 	public String registerSeller(@Valid @RequestBody RegisterRequest registerRequest) {
 		log.info("Registering new seller: {}", registerRequest.getEmail());
 		userService.register(registerRequest, "SELLER");
